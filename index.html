@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playground - HTML5 미니 게임 모음 | eottabom</title>
+  <meta name="description" content="HTML5로 만든 미니 게임과 재미있는 웹 콘텐츠 모음. 포츈쿠키 운세, 그리고 더 많은 게임들!">
+  <meta name="keywords" content="HTML5 게임, 미니 게임, 포츈쿠키, fortune cookie, 웹 게임, eottabom">
+  <meta property="og:title" content="Playground - HTML5 미니 게임 모음">
+  <meta property="og:description" content="HTML5로 만든 미니 게임과 재미있는 웹 콘텐츠 모음">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5103032140213770"
+     crossorigin="anonymous"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --page-bg:
+        radial-gradient(circle at top, rgba(255, 212, 107, 0.18), transparent 26%),
+        linear-gradient(180deg, #100813, #17172d 50%, #0e223c);
+      --card-bg: linear-gradient(160deg, rgba(34, 22, 48, 0.92), rgba(17, 39, 66, 0.92));
+      --line: rgba(255, 212, 107, 0.18);
+      --gold: #ffd46b;
+      --text-soft: rgba(255, 245, 221, 0.66);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--page-bg);
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8f1de;
+      padding: 24px;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: radial-gradient(circle at center, black, transparent 82%);
+      pointer-events: none;
+    }
+
+    .top-bar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 16px 24px;
+      z-index: 100;
+    }
+
+    .lang-toggle {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: #ffd700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+      letter-spacing: 1px;
+    }
+
+    .lang-toggle:hover {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: #ffd700;
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 760px;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 4.6rem);
+      margin-bottom: 0.7rem;
+      background: linear-gradient(135deg, var(--gold), #ff9b54);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-soft);
+      margin-bottom: 2.6rem;
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      max-width: 920px;
+      width: 90%;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 2rem 1.8rem;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 1rem;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 212, 107, 0.5);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+    }
+
+    .game-card .icon {
+      font-size: 3.8rem;
+    }
+
+    .game-card .name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .game-card .desc {
+      font-size: 0.94rem;
+      color: rgba(255, 245, 221, 0.62);
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 4rem;
+      color: #555;
+      font-size: 0.85rem;
+    }
+
+    .ad-section {
+      width: min(920px, 92vw);
+      margin-top: 2rem;
+      min-height: 120px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button class="lang-toggle" id="langToggle">EN</button>
+  </div>
+
+  <div class="hero">
+    <h1>Playground</h1>
+    <p class="subtitle" id="subtitle">HTML5 미니 게임 & 재미 모음</p>
+  </div>
+
+  <div class="game-grid">
+    <a href="fortune-cookie/" class="game-card">
+      <div class="icon">🥠</div>
+      <div class="name" data-ko="포츈쿠키" data-en="Fortune Cookie">포츈쿠키</div>
+      <div class="desc" data-ko="쿠키를 깨서 오늘의 운세를 확인하세요" data-en="Crack open a cookie and discover your fortune">쿠키를 깨서 오늘의 운세를 확인하세요</div>
+    </a>
+  </div>
+
+  <footer>
+    <a href="https://github.com/eottabom" target="_blank" rel="noopener noreferrer" style="color:#888; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+    &nbsp;&nbsp;
+    <a href="https://eottabom.github.io" target="_blank" rel="noopener noreferrer" style="color:#888; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Blog
+    </a>
+    &nbsp;&nbsp;
+    <a href="https://eottabom.github.io/toolkit" target="_blank" rel="noopener noreferrer" style="color:#888; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+      Toolkit
+    </a>
+  </footer>
+
+  <div class="ad-section">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-format="autorelaxed"
+      data-ad-client="ca-pub-5103032140213770"
+      data-ad-slot="3384415421"></ins>
+  </div>
+
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+
+    (function() {
+      var lang = localStorage.getItem('playground-lang') || 'ko';
+      var toggle = document.getElementById('langToggle');
+      var subtitle = document.getElementById('subtitle');
+      var texts = {
+        ko: { subtitle: 'HTML5 미니 게임 & 재미 모음', toggle: 'EN' },
+        en: { subtitle: 'HTML5 Mini Games & Fun Collection', toggle: '한국어' }
+      };
+
+      function applyLang(l) {
+        lang = l;
+        localStorage.setItem('playground-lang', l);
+        document.documentElement.lang = l;
+        subtitle.textContent = texts[l].subtitle;
+        toggle.textContent = texts[l].toggle;
+        document.querySelectorAll('[data-ko]').forEach(function(el) {
+          el.textContent = el.getAttribute('data-' + l);
+        });
+      }
+
+      toggle.addEventListener('click', function() {
+        applyLang(lang === 'ko' ? 'en' : 'ko');
+      });
+
+      applyLang(lang);
+    })();
+  </script>
+</body>
+</html>
