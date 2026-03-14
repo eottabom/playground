@@ -763,18 +763,102 @@ class FortuneCookie {
     this.drawCookie();
   }
 
+  private async generateShareCard(): Promise<Blob> {
+    const t = this.getStrings();
+    const idx = Math.min(this.currentFortuneIdx, t.messages.length - 1);
+    const text = t.messages[idx];
+    const tag = t.tags[this.currentTagIdx % t.tags.length];
+    const S = 1080;
+    const cv = document.createElement("canvas");
+    cv.width = S; cv.height = S;
+    const ctx = cv.getContext("2d")!;
+
+    const bg = ctx.createRadialGradient(S/2, S*0.36, S*0.08, S/2, S*0.5, S*0.85);
+    bg.addColorStop(0, "#4a5cd6"); bg.addColorStop(1, "#252a7a");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, S, S);
+
+    ctx.save(); ctx.translate(S*0.48, S*0.30); ctx.scale(3.2, 3.2);
+    ctx.beginPath(); ctx.ellipse(0, 82, 50, 10, 0, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(0,0,0,0.18)"; ctx.fill();
+    ctx.save(); ctx.translate(28, 38); ctx.rotate(0.22);
+    ctx.fillStyle = "#fffdf5"; ctx.beginPath(); ctx.roundRect(-22, -12, 58, 48, 4); ctx.fill();
+    ctx.strokeStyle = "#c0c0c0"; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.font = "bold 26px sans-serif"; ctx.fillStyle = "#3b4cca";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", 7, 12);
+    ctx.restore();
+    ctx.beginPath(); ctx.moveTo(8,-72);
+    ctx.bezierCurveTo(-22,-75,-72,-42,-76,6); ctx.bezierCurveTo(-73,46,-34,70,8,72);
+    ctx.bezierCurveTo(30,66,52,34,50,0); ctx.bezierCurveTo(46,-36,26,-66,8,-72); ctx.closePath();
+    const ck = ctx.createLinearGradient(-68,-55,45,55);
+    ck.addColorStop(0,"#f5d88a"); ck.addColorStop(0.5,"#e8b550"); ck.addColorStop(1,"#c88a30");
+    ctx.fillStyle = ck; ctx.fill();
+    ctx.strokeStyle = "#4a3218"; ctx.lineWidth = 3.2; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(3,-65); ctx.bezierCurveTo(-10,-20,-7,22,3,65);
+    ctx.strokeStyle = "#9a6020"; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-28,-28,22,16,-0.4,0,Math.PI*2);
+    ctx.fillStyle = "rgba(255,240,200,0.22)"; ctx.fill();
+    ctx.restore();
+
+    const cardX = S*0.08, cardY = S*0.56, cardW = S*0.84, cardH = S*0.34;
+    ctx.fillStyle = "rgba(8,6,24,0.72)"; ctx.beginPath(); ctx.roundRect(cardX,cardY,cardW,cardH,20); ctx.fill();
+    ctx.strokeStyle = "rgba(255,212,107,0.2)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(cardX,cardY,cardW,cardH,20); ctx.stroke();
+
+    ctx.font = "600 36px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#fff7e8";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    const lines = this.wrapText(ctx, text, cardW - 72);
+    const lh = 50, sy = cardY + (cardH - lines.length*lh - 36)/2 + 8;
+    lines.forEach((l, i) => ctx.fillText(l, S/2, sy + i*lh));
+
+    ctx.font = "500 26px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,212,107,0.6)";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`🔮 ${t.luckyLabel} ${this.currentLucky}  ·  ${tag}`, S/2, cardY+cardH-16);
+    ctx.font = "bold 28px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.fillText(t.title, S/2, S-32);
+
+    return new Promise((resolve, reject) => {
+      cv.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob failed"))), "image/png");
+    });
+  }
+
+  private wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+    const words = text.split(/(\s+)/);
+    const lines: string[] = [];
+    let cur = "";
+    for (const w of words) {
+      const test = cur + w;
+      if (ctx.measureText(test).width > maxWidth && cur.trim()) { lines.push(cur.trim()); cur = w.trimStart(); }
+      else { cur = test; }
+    }
+    if (cur.trim()) lines.push(cur.trim());
+    return lines;
+  }
+
   private async shareFortune(): Promise<void> {
     const t = this.getStrings();
     const hash = `#f=${this.currentFortuneIdx}&l=${this.currentLucky}&t=${this.currentTagIdx}&c=${this.currentColorIdx}&lang=${this.lang}`;
     const url = `${location.origin}${location.pathname}${hash}`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ url, title: t.title });
+    try {
+      const blob = await this.generateShareCard();
+      const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: t.title, url });
         return;
-      } catch {
-        // fall through to clipboard
       }
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "fortune-cookie.png";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      this.showToast(this.lang === "ko" ? "이미지가 저장됐어요 ✓" : "Image saved ✓");
+      return;
+    } catch {
+      // fall through
+    }
+
+    if (navigator.share) {
+      try { await navigator.share({ url, title: t.title }); return; } catch { /* fall through */ }
     }
 
     try {
