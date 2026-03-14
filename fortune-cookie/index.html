@@ -195,10 +195,8 @@
       "toggle": "EN",
       "keywordLabel": "오늘의 키워드",
       "colorLabel": "행운의 색",
-      "introLabelOne": "Inside today",
-      "introValueOne": "오늘의 기분을 흔들 메시지가 안에 들어 있어요.",
-      "introLabelTwo": "Fortune hint",
-      "introValueTwo": "행운의 숫자와 오늘의 키워드를 보여줍니다.",
+      "share": "공유하기",
+      "shareToast": "링크가 복사됐어요 ✓",
       "sceneAria": "포츈쿠키 열기",
       "luckyColors": [
         {
@@ -397,10 +395,8 @@
       "toggle": "한국어",
       "keywordLabel": "Keyword",
       "colorLabel": "Lucky Color",
-      "introLabelOne": "Inside today",
-      "introValueOne": "There is a short message inside waiting to shake up your day.",
-      "introLabelTwo": "Fortune hint",
-      "introValueTwo": "You will get a lucky number and today's keyword.",
+      "share": "Share",
+      "shareToast": "Link copied ✓",
       "sceneAria": "Open fortune cookie",
       "luckyColors": [
         {
@@ -453,20 +449,12 @@
     <p class="subtitle" id="subtitle">쿠키를 클릭해서 오늘의 운세를 확인하세요!</p>
   </div>
 
-  <div class="intro-card" id="introCard">
-    <div class="intro-panel">
-      <div class="intro-label" id="introLabelOne">Inside today</div>
-      <div class="intro-value" id="introValueOne">오늘의 기분을 흔들 메시지가 안에 들어 있어요.</div>
-    </div>
-    <div class="intro-panel">
-      <div class="intro-label" id="introLabelTwo">Fortune hint</div>
-      <div class="intro-value" id="introValueTwo">행운의 숫자와 짧은 신호를 함께 보여줍니다.</div>
-    </div>
-  </div>
-
   <div class="cookie-scene" id="cookieScene" role="button" tabindex="0" aria-label="포츈쿠키 열기">
     <div class="scene-aura"></div>
     <div class="scene-ring"></div>
+    <div class="cookie-closed">
+      <canvas class="cookie-canvas" id="canvasClosed" width="360" height="300"></canvas>
+    </div>
     <div class="cookie-half cookie-left">
       <canvas class="cookie-canvas" id="canvasLeft" width="320" height="400"></canvas>
     </div>
@@ -476,6 +464,7 @@
     <div class="mini-slip" id="miniSlip">
       <div class="slip-text" id="miniSlipText"></div>
       <div class="slip-meta" id="miniSlipMeta"></div>
+      <button class="share-btn" id="shareBtn">공유하기</button>
     </div>
     <div class="cookie-pedestal"></div>
   </div>
@@ -511,6 +500,7 @@
   </div>
 
   <div class="particles" id="particles"></div>
+  <div class="share-toast" id="shareToast"></div>
 
   <script>
     (adsbygoogle = window.adsbygoogle || []).push({});

@@ -20,6 +20,147 @@ function formatFortuneText(text) {
     }
     return [sentences[0], sentences.slice(1).join(" ")].join("\n");
 }
+function drawClosedCookie(canvas) {
+    resizeCanvas(canvas);
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width;
+    const h = canvas.height;
+    const random = createSeededRandom(7);
+    ctx.clearRect(0, 0, w, h);
+    const cx = w * 0.5;
+    const cy = h * 0.58;
+    const topY = h * 0.16;
+    const bottomY = h * 0.84;
+    const wingOuter = w * 0.19;
+    const wingInner = w * 0.09;
+    const path = new Path2D();
+    path.moveTo(cx, topY);
+    path.bezierCurveTo(cx - wingInner, h * 0.2, cx - wingOuter, h * 0.29, cx - wingOuter, h * 0.42);
+    path.bezierCurveTo(cx - wingOuter, h * 0.58, cx - wingInner * 1.25, h * 0.76, cx, bottomY);
+    path.bezierCurveTo(cx + wingInner * 1.25, h * 0.76, cx + wingOuter, h * 0.58, cx + wingOuter, h * 0.42);
+    path.bezierCurveTo(cx + wingOuter, h * 0.29, cx + wingInner, h * 0.2, cx, topY);
+    path.closePath();
+    const shadow = ctx.createRadialGradient(cx, h * 0.87, 0, cx, h * 0.87, w * 0.22);
+    shadow.addColorStop(0, "rgba(0,0,0,0.22)");
+    shadow.addColorStop(0.5, "rgba(0,0,0,0.08)");
+    shadow.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = shadow;
+    ctx.beginPath();
+    ctx.ellipse(cx, h * 0.87, w * 0.17, h * 0.04, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.save();
+    const body = ctx.createRadialGradient(w * 0.38, h * 0.28, w * 0.04, cx, cy, w * 0.44);
+    body.addColorStop(0, "#fce9b6");
+    body.addColorStop(0.20, "#f5d57c");
+    body.addColorStop(0.45, "#e8b44d");
+    body.addColorStop(0.70, "#d49332");
+    body.addColorStop(1, "#b07025");
+    ctx.fillStyle = body;
+    ctx.fill(path);
+    ctx.clip(path);
+    // Ambient occlusion - darken edges
+    const ao = ctx.createRadialGradient(cx, cy, w * 0.06, cx, cy, w * 0.26);
+    ao.addColorStop(0, "rgba(0,0,0,0)");
+    ao.addColorStop(0.55, "rgba(0,0,0,0)");
+    ao.addColorStop(0.78, "rgba(80,40,10,0.14)");
+    ao.addColorStop(1.0, "rgba(60,25,5,0.32)");
+    ctx.fillStyle = ao;
+    ctx.fillRect(0, 0, w, h);
+    const leftShade = ctx.createLinearGradient(cx - wingOuter, 0, cx - wingOuter * 0.4, 0);
+    leftShade.addColorStop(0, "rgba(100,55,15,0.28)");
+    leftShade.addColorStop(1, "rgba(100,55,15,0)");
+    ctx.fillStyle = leftShade;
+    ctx.fillRect(0, 0, w, h);
+    const rightShade = ctx.createLinearGradient(cx + wingOuter, 0, cx + wingOuter * 0.4, 0);
+    rightShade.addColorStop(0, "rgba(100,55,15,0.30)");
+    rightShade.addColorStop(1, "rgba(100,55,15,0)");
+    ctx.fillStyle = rightShade;
+    ctx.fillRect(0, 0, w, h);
+    // Top/bottom pinch darkening
+    const topDk = ctx.createLinearGradient(0, topY, 0, topY + h * 0.14);
+    topDk.addColorStop(0, "rgba(90,45,10,0.32)");
+    topDk.addColorStop(1, "rgba(90,45,10,0)");
+    ctx.fillStyle = topDk;
+    ctx.fillRect(0, 0, w, h);
+    const botDk = ctx.createLinearGradient(0, bottomY, 0, bottomY - h * 0.14);
+    botDk.addColorStop(0, "rgba(90,45,10,0.32)");
+    botDk.addColorStop(1, "rgba(90,45,10,0)");
+    ctx.fillStyle = botDk;
+    ctx.fillRect(0, 0, w, h);
+    // Main specular highlight - upper left
+    const highlight = ctx.createRadialGradient(w * 0.36, h * 0.30, 0, w * 0.36, h * 0.30, w * 0.24);
+    highlight.addColorStop(0, "rgba(255,252,235,0.50)");
+    highlight.addColorStop(0.25, "rgba(255,248,220,0.28)");
+    highlight.addColorStop(0.55, "rgba(255,245,210,0.08)");
+    highlight.addColorStop(1, "rgba(255,240,200,0)");
+    ctx.fillStyle = highlight;
+    ctx.fillRect(0, 0, w, h);
+    // Secondary highlight - upper right
+    const highlight2 = ctx.createRadialGradient(w * 0.62, h * 0.34, 0, w * 0.62, h * 0.34, w * 0.18);
+    highlight2.addColorStop(0, "rgba(255,250,230,0.20)");
+    highlight2.addColorStop(0.5, "rgba(255,248,220,0.05)");
+    highlight2.addColorStop(1, "rgba(255,240,200,0)");
+    ctx.fillStyle = highlight2;
+    ctx.fillRect(0, 0, w, h);
+    // Glaze sheen - diagonal reflection
+    const glaze = ctx.createLinearGradient(w * 0.25, h * 0.15, w * 0.75, h * 0.85);
+    glaze.addColorStop(0, "rgba(255,255,255,0)");
+    glaze.addColorStop(0.30, "rgba(255,255,255,0.05)");
+    glaze.addColorStop(0.48, "rgba(255,255,255,0.10)");
+    glaze.addColorStop(0.65, "rgba(255,255,255,0.03)");
+    glaze.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = glaze;
+    ctx.fillRect(0, 0, w, h);
+    // Center fold seam
+    ctx.strokeStyle = "rgba(145,92,34,0.22)";
+    ctx.lineWidth = w * 0.007;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx, topY + h * 0.03);
+    ctx.bezierCurveTo(cx - wingInner * 0.45, h * 0.32, cx - wingInner * 0.42, h * 0.67, cx, bottomY - h * 0.03);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, topY + h * 0.03);
+    ctx.bezierCurveTo(cx + wingInner * 0.45, h * 0.32, cx + wingInner * 0.42, h * 0.67, cx, bottomY - h * 0.03);
+    ctx.stroke();
+    // Soft fold shadow
+    const foldSh = ctx.createLinearGradient(cx - w * 0.035, 0, cx + w * 0.035, 0);
+    foldSh.addColorStop(0, "rgba(0,0,0,0)");
+    foldSh.addColorStop(0.3, "rgba(90,50,15,0.06)");
+    foldSh.addColorStop(0.5, "rgba(90,50,15,0.10)");
+    foldSh.addColorStop(0.7, "rgba(90,50,15,0.06)");
+    foldSh.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = foldSh;
+    ctx.fillRect(cx - w * 0.05, topY, w * 0.10, bottomY - topY);
+    // Surface texture - fine dots
+    for (let i = 0; i < 45; i++) {
+        const angle = random() * Math.PI * 2;
+        const dist = random() * 0.80;
+        const px = cx + Math.cos(angle) * wingOuter * 0.8 * dist;
+        const py = cy + Math.sin(angle) * (bottomY - topY) * 0.38 * dist;
+        ctx.beginPath();
+        ctx.arc(px, py, w * (0.0012 + random() * 0.0028), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(118,72,20,${0.04 + random() * 0.05})`;
+        ctx.fill();
+    }
+    // Larger baked spots
+    for (let i = 0; i < 10; i++) {
+        const angle = random() * Math.PI * 2;
+        const dist = 0.12 + random() * 0.58;
+        const px = cx + Math.cos(angle) * wingOuter * 0.65 * dist;
+        const py = cy + Math.sin(angle) * (bottomY - topY) * 0.32 * dist;
+        const gs = w * (0.003 + random() * 0.006);
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate(random() * Math.PI);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, gs, gs * 0.55, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(140,80,25,${0.03 + random() * 0.04})`;
+        ctx.fill();
+        ctx.restore();
+    }
+    ctx.restore();
+}
 function drawCookieHalf(canvas, side) {
     resizeCanvas(canvas);
     const ctx = canvas.getContext("2d");
@@ -27,97 +168,174 @@ function drawCookieHalf(canvas, side) {
     const h = canvas.height;
     const random = createSeededRandom(side === "left" ? 17 : 29);
     ctx.clearRect(0, 0, w, h);
-    const cx = side === "left" ? w * 0.6 : w * 0.4;
-    const cy = h * 0.5;
-    const rx = w * 0.41;
-    const ry = h * 0.4;
-    const tilt = side === "left" ? -0.12 : 0.12;
-    // Shadow
+    const isLeft = side === "left";
+    // Break edge (faces scene center), outer edge (far edge of the folded wafer)
+    const breakX = isLeft ? w * 0.535 : w * 0.465;
+    const outerX = isLeft ? w * 0.22 : w * 0.78;
+    const cy = h * 0.52;
+    const pinchH = h * 0.13;
+    // Folded wafer silhouette: taller and more tucked in so it reads as a folded cookie, not a dumpling.
+    function cookiePath() {
+        ctx.beginPath();
+        if (isLeft) {
+            ctx.moveTo(breakX, cy - pinchH);
+            ctx.bezierCurveTo(w * 0.46, cy - h * 0.29, outerX + w * 0.13, cy - h * 0.2, outerX + w * 0.01, cy - h * 0.015);
+            ctx.bezierCurveTo(outerX + w * 0.035, cy + h * 0.075, outerX + w * 0.12, cy + h * 0.2, breakX, cy + pinchH);
+        }
+        else {
+            ctx.moveTo(breakX, cy - pinchH);
+            ctx.bezierCurveTo(w * 0.54, cy - h * 0.29, outerX - w * 0.13, cy - h * 0.2, outerX - w * 0.01, cy - h * 0.015);
+            ctx.bezierCurveTo(outerX - w * 0.035, cy + h * 0.075, outerX - w * 0.12, cy + h * 0.2, breakX, cy + pinchH);
+        }
+        ctx.closePath(); // straight line = break edge
+    }
+    // Approximate visual center of this cookie half
+    const bodyCx = isLeft ? w * 0.425 : w * 0.575;
+    const bodyCy = cy;
+    // Drop shadow beneath the cookie
     ctx.save();
+    const shadowGrad = ctx.createRadialGradient(bodyCx, cy + h * 0.41, 0, bodyCx, cy + h * 0.41, w * 0.40);
+    shadowGrad.addColorStop(0, "rgba(0,0,0,0.22)");
+    shadowGrad.addColorStop(0.55, "rgba(0,0,0,0.09)");
+    shadowGrad.addColorStop(1, "rgba(0,0,0,0)");
     ctx.beginPath();
-    ctx.ellipse(cx, cy + ry * 0.78, rx * 0.82, h * 0.04, 0, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(0,0,0,0.22)";
+    ctx.ellipse(bodyCx, cy + h * 0.36, w * 0.28, h * 0.042, 0, 0, Math.PI * 2);
+    ctx.fillStyle = shadowGrad;
     ctx.fill();
     ctx.restore();
-    // Main cookie body
-    const grad = ctx.createRadialGradient(cx - rx * 0.28, cy - ry * 0.34, rx * 0.08, cx, cy, rx);
-    grad.addColorStop(0, "#f8e4ab");
-    grad.addColorStop(0.24, "#ebc97f");
-    grad.addColorStop(0.62, "#cc9946");
-    grad.addColorStop(1, "#8a5b23");
+    // Fold seam to suggest the original wafer being bent inward
     ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(tilt);
-    ctx.translate(-cx, -cy);
+    cookiePath();
+    ctx.clip();
+    ctx.strokeStyle = "rgba(142, 92, 34, 0.34)";
+    ctx.lineWidth = w * 0.01;
+    ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-    ctx.restore();
-    // Edge shading
-    const edgeGrad = ctx.createRadialGradient(cx, cy, rx * 0.55, cx, cy, rx * 1.02);
-    edgeGrad.addColorStop(0, "rgba(0,0,0,0)");
-    edgeGrad.addColorStop(1, "rgba(80,50,10,0.52)");
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fillStyle = edgeGrad;
-    ctx.fill();
-    const glaze = ctx.createLinearGradient(cx - rx * 0.6, cy - ry * 0.8, cx + rx * 0.5, cy + ry * 0.8);
-    glaze.addColorStop(0, "rgba(255,255,255,0.2)");
-    glaze.addColorStop(0.4, "rgba(255,255,255,0)");
-    glaze.addColorStop(1, "rgba(108,62,8,0.24)");
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-    ctx.fillStyle = glaze;
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255, 225, 153, 0.35)";
-    ctx.lineWidth = Math.max(1.5, w * 0.005);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx * 0.96, ry * 0.96, tilt, 0.28, Math.PI * 1.62);
+    if (isLeft) {
+        ctx.moveTo(breakX - w * 0.05, cy - h * 0.12);
+        ctx.quadraticCurveTo(outerX + w * 0.11, cy, breakX - w * 0.05, cy + h * 0.12);
+    }
+    else {
+        ctx.moveTo(breakX + w * 0.05, cy - h * 0.12);
+        ctx.quadraticCurveTo(outerX - w * 0.11, cy, breakX + w * 0.05, cy + h * 0.12);
+    }
     ctx.stroke();
-    const foldGrad = ctx.createLinearGradient(cx, cy - ry * 0.55, cx, cy + ry * 0.55);
-    foldGrad.addColorStop(0, "rgba(120, 73, 18, 0)");
-    foldGrad.addColorStop(0.5, "rgba(120, 73, 18, 0.16)");
-    foldGrad.addColorStop(1, "rgba(120, 73, 18, 0)");
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(tilt);
-    ctx.translate(-cx, -cy);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy, rx * 0.62, ry * 0.82, 0, 0, Math.PI * 2);
-    ctx.fillStyle = foldGrad;
-    ctx.fill();
     ctx.restore();
-    // Highlight
+    // ── Cookie body (all layers clipped to wing shape) ──
     ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(cx - rx * 0.22, cy - ry * 0.26, rx * 0.52, ry * 0.38, -0.36, 0, Math.PI * 2);
-    const hlGrad = ctx.createRadialGradient(cx - 25, cy - 40, 5, cx - 25, cy - 40, rx * 0.5);
-    hlGrad.addColorStop(0, "rgba(255,230,160,0.35)");
-    hlGrad.addColorStop(1, "rgba(255,230,160,0)");
-    ctx.fillStyle = hlGrad;
-    ctx.fill();
+    cookiePath();
+    ctx.clip();
+    // Main colour — warm golden‑brown, light source from outer-upper corner
+    const lightX = isLeft ? outerX + w * 0.1 : outerX - w * 0.1;
+    const lightY = cy - h * 0.19;
+    const mainGrad = ctx.createRadialGradient(lightX, lightY, w * 0.02, bodyCx, bodyCy, w * 0.56);
+    mainGrad.addColorStop(0, "#fae7ab");
+    mainGrad.addColorStop(0.24, "#f1d27a");
+    mainGrad.addColorStop(0.52, "#dfab4e");
+    mainGrad.addColorStop(0.78, "#c07f2f");
+    mainGrad.addColorStop(1.0, "#9d5e22");
+    ctx.fillStyle = mainGrad;
+    ctx.fillRect(0, 0, w, h);
+    // Edge/rim darkening
+    const rimGrad = ctx.createRadialGradient(bodyCx, bodyCy, w * 0.14, bodyCx, bodyCy, w * 0.5);
+    rimGrad.addColorStop(0, "rgba(0,0,0,0)");
+    rimGrad.addColorStop(0.62, "rgba(0,0,0,0)");
+    rimGrad.addColorStop(0.8, "rgba(72,36,8,0.18)");
+    rimGrad.addColorStop(1.0, "rgba(72,36,8,0.4)");
+    ctx.fillStyle = rimGrad;
+    ctx.fillRect(0, 0, w, h);
+    // Top taper darkening (surface curls away from viewer)
+    const topDark = ctx.createLinearGradient(0, cy - pinchH, 0, cy - h * 0.28);
+    topDark.addColorStop(0, "rgba(82,40,7,0)");
+    topDark.addColorStop(1, "rgba(82,40,7,0.22)");
+    ctx.fillStyle = topDark;
+    ctx.fillRect(0, 0, w, h);
+    // Bottom taper darkening
+    const botDark = ctx.createLinearGradient(0, cy + pinchH, 0, cy + h * 0.3);
+    botDark.addColorStop(0, "rgba(82,40,7,0)");
+    botDark.addColorStop(1, "rgba(82,40,7,0.26)");
+    ctx.fillStyle = botDark;
+    ctx.fillRect(0, 0, w, h);
+    // Specular highlight
+    const specGrad = ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, w * 0.34);
+    specGrad.addColorStop(0, "rgba(255,248,220,0.4)");
+    specGrad.addColorStop(0.42, "rgba(255,248,220,0.12)");
+    specGrad.addColorStop(1, "rgba(255,248,215,0)");
+    ctx.fillStyle = specGrad;
+    ctx.fillRect(0, 0, w, h);
+    // Glaze sheen
+    const glazeDir = isLeft ? -1 : 1;
+    const glaze = ctx.createLinearGradient(bodyCx + glazeDir * w * 0.18, cy - h * 0.2, bodyCx - glazeDir * w * 0.18, cy + h * 0.18);
+    glaze.addColorStop(0, "rgba(255,255,255,0.12)");
+    glaze.addColorStop(0.45, "rgba(255,255,255,0)");
+    glaze.addColorStop(1, "rgba(80,38,8,0.12)");
+    ctx.fillStyle = glaze;
+    ctx.fillRect(0, 0, w, h);
     ctx.restore();
-    // Flat edge (broken side)
-    const edgeX = side === "left" ? cx + rx * 0.55 : cx - rx * 0.55;
+    // ── Surface texture (sesame grain + pores) ──
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(side === "left" ? edgeX : 0, cy - ry, side === "left" ? w - edgeX : edgeX, ry * 2);
-    ctx.fillStyle = "rgba(26, 10, 46, 1)";
-    ctx.globalCompositeOperation = "destination-out";
-    ctx.fill();
+    cookiePath();
+    ctx.clip();
+    for (let i = 0; i < 14; i++) {
+        const angle = random() * Math.PI * 2;
+        const dist = 0.14 + random() * 0.64;
+        const bx = bodyCx + Math.cos(angle) * w * 0.23 * dist;
+        const by = bodyCy + Math.sin(angle) * h * 0.23 * dist;
+        const gs = w * (0.004 + random() * 0.006);
+        ctx.save();
+        ctx.translate(bx, by);
+        ctx.rotate(random() * Math.PI);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, gs, gs * 0.52, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(127,78,22,${0.08 + random() * 0.06})`;
+        ctx.fill();
+        ctx.restore();
+    }
+    for (let i = 0; i < 34; i++) {
+        const angle = random() * Math.PI * 2;
+        const dist = random() * 0.78;
+        const bx = bodyCx + Math.cos(angle) * w * 0.24 * dist;
+        const by = bodyCy + Math.sin(angle) * h * 0.24 * dist;
+        ctx.beginPath();
+        ctx.arc(bx, by, w * (0.0016 + random() * 0.003), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(118,72,20,${0.07 + random() * 0.06})`;
+        ctx.fill();
+    }
     ctx.restore();
-    // Broken edge texture
-    ctx.save();
-    ctx.strokeStyle = "#9b6d26";
-    ctx.lineWidth = Math.max(2, w * 0.008);
-    ctx.beginPath();
+    // ── Break-edge cross-section (shows cookie thickness) ──
+    const rimW = w * 0.012;
+    const inward = isLeft ? -1 : 1;
     const steps = 12;
+    ctx.save();
+    cookiePath();
+    ctx.clip();
+    for (let i = 0; i < steps; i++) {
+        const t1 = i / steps;
+        const t2 = (i + 1) / steps;
+        const ey1 = (cy - pinchH) + t1 * pinchH * 2;
+        const ey2 = (cy - pinchH) + t2 * pinchH * 2;
+        const j1 = Math.sin(t1 * 21) * (w * 0.016) + Math.cos(t1 * 33) * (w * 0.008);
+        const j2 = Math.sin(t2 * 21) * (w * 0.016) + Math.cos(t2 * 33) * (w * 0.008);
+        ctx.beginPath();
+        ctx.moveTo(breakX + j1, ey1);
+        ctx.lineTo(breakX + j2, ey2);
+        ctx.lineTo(breakX + j2 + inward * rimW, ey2);
+        ctx.lineTo(breakX + j1 + inward * rimW, ey1);
+        ctx.closePath();
+        ctx.fillStyle = "rgba(232,186,96,0.44)";
+        ctx.fill();
+    }
+    ctx.restore();
+    // Subtle inner fold line. Keep it soft so the cookie does not look pre-cracked.
+    ctx.save();
+    ctx.strokeStyle = "rgba(187,124,49,0.26)";
+    ctx.lineWidth = Math.max(0.9, w * 0.0028);
+    ctx.beginPath();
     for (let i = 0; i <= steps; i++) {
         const t = i / steps;
-        const ey = cy - ry * 0.85 + t * ry * 1.7;
-        const jitter = Math.sin(t * 17) * (w * 0.02) + Math.cos(t * 23) * (w * 0.014);
-        const ex = edgeX + jitter;
+        const ey = (cy - pinchH) + t * pinchH * 2;
+        const jitter = Math.sin(t * 21) * (w * 0.006) + Math.cos(t * 33) * (w * 0.003);
+        const ex = breakX + jitter;
         if (i === 0)
             ctx.moveTo(ex, ey);
         else
@@ -125,32 +343,6 @@ function drawCookieHalf(canvas, side) {
     }
     ctx.stroke();
     ctx.restore();
-    // Subtle texture bumps
-    ctx.fillStyle = "rgba(137, 92, 25, 0.17)";
-    for (let i = 0; i < 18; i++) {
-        const angle = random() * Math.PI * 2;
-        const dist = random() * 0.7;
-        const bx = cx + Math.cos(angle) * rx * dist;
-        const by = cy + Math.sin(angle) * ry * dist;
-        ctx.beginPath();
-        ctx.arc(bx, by, w * (0.008 + random() * 0.012), 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.fillStyle = "rgba(120, 77, 19, 0.2)";
-    for (let i = 0; i < 10; i++) {
-        const angle = random() * Math.PI * 2;
-        const dist = 0.18 + random() * 0.62;
-        const bx = cx + Math.cos(angle) * rx * dist;
-        const by = cy + Math.sin(angle) * ry * dist;
-        ctx.beginPath();
-        ctx.ellipse(bx, by, w * (0.006 + random() * 0.008), h * (0.004 + random() * 0.008), random() * Math.PI, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.strokeStyle = "rgba(255, 240, 195, 0.28)";
-    ctx.lineWidth = Math.max(1.5, w * 0.005);
-    ctx.beginPath();
-    ctx.ellipse(cx - w * 0.05, cy - h * 0.08, rx * 0.68, ry * 0.6, -0.34, 0.1, 1.75);
-    ctx.stroke();
 }
 class FortuneCookie {
     constructor() {
@@ -168,21 +360,22 @@ class FortuneCookie {
         this.miniSlipMeta = document.getElementById("miniSlipMeta");
         this.instruction = document.getElementById("instruction");
         this.resetBtn = document.getElementById("resetBtn");
+        this.shareBtn = document.getElementById("shareBtn");
         this.titleEl = document.getElementById("title");
         this.subtitleEl = document.getElementById("subtitle");
         this.homeLink = document.getElementById("homeLink");
         this.langToggle = document.getElementById("langToggle");
-        this.introCard = document.getElementById("introCard");
-        this.introLabelOne = document.getElementById("introLabelOne");
-        this.introValueOne = document.getElementById("introValueOne");
-        this.introLabelTwo = document.getElementById("introLabelTwo");
-        this.introValueTwo = document.getElementById("introValueTwo");
         this.statusNote = document.getElementById("statusNote");
         this.canvasLeft = document.getElementById("canvasLeft");
         this.canvasRight = document.getElementById("canvasRight");
+        this.canvasClosed = document.getElementById("canvasClosed");
         this.lang = localStorage.getItem("playground-lang") || "ko";
         this.scene.addEventListener("click", () => this.crack());
         this.resetBtn.addEventListener("click", () => this.reset());
+        this.shareBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.shareFortune();
+        });
         this.langToggle.addEventListener("click", () => {
             this.lang = this.lang === "ko" ? "en" : "ko";
             localStorage.setItem("playground-lang", this.lang);
@@ -196,34 +389,45 @@ class FortuneCookie {
     async initialize() {
         this.createStars();
         this.drawCookie();
-        const embedded = document.getElementById("fortuneI18nData");
-        if (embedded === null || embedded === void 0 ? void 0 : embedded.textContent) {
+        const data = this.loadI18nData();
+        if (!data) {
             try {
-                const data = JSON.parse(embedded.textContent);
-                this.content = {
-                    ko: data.ko.fortune,
-                    en: data.en.fortune,
-                };
-                this.isReady = true;
-                this.applyLang();
-                return;
+                const response = await fetch("./i18n.json");
+                this.applyI18nData(await response.json());
             }
             catch (error) {
-                console.error("Failed to parse embedded fortune i18n data", error);
+                console.error("Failed to load fortune i18n data", error);
             }
         }
+    }
+    loadI18nData() {
+        const embedded = document.getElementById("fortuneI18nData");
+        if (!(embedded === null || embedded === void 0 ? void 0 : embedded.textContent))
+            return false;
         try {
-            const response = await fetch("./i18n.json");
-            const data = await response.json();
-            this.content = {
-                ko: data.ko.fortune,
-                en: data.en.fortune,
-            };
-            this.isReady = true;
-            this.applyLang();
+            this.applyI18nData(JSON.parse(embedded.textContent));
+            return true;
         }
         catch (error) {
-            console.error("Failed to load fortune i18n data", error);
+            console.error("Failed to parse embedded fortune i18n data", error);
+            return false;
+        }
+    }
+    applyI18nData(data) {
+        this.content = {
+            ko: data.ko.fortune,
+            en: data.en.fortune,
+        };
+        this.isReady = true;
+        const fromHash = this.loadFromHash();
+        if (fromHash)
+            this.isCracked = true;
+        this.applyLang();
+        if (fromHash) {
+            this.instruction.classList.add("hidden");
+            this.scene.classList.add("cracked");
+            this.miniSlip.classList.add("visible");
+            this.resetBtn.classList.add("visible");
         }
     }
     getStrings() {
@@ -237,10 +441,7 @@ class FortuneCookie {
         document.documentElement.lang = this.lang;
         this.titleEl.textContent = t.title;
         this.subtitleEl.textContent = t.subtitle;
-        this.introLabelOne.textContent = t.introLabelOne;
-        this.introValueOne.textContent = t.introValueOne;
-        this.introLabelTwo.textContent = t.introLabelTwo;
-        this.introValueTwo.textContent = t.introValueTwo;
+        this.shareBtn.textContent = t.share;
         if (!this.isCracked) {
             this.instruction.textContent = t.instruction;
             this.statusNote.textContent = t.statusHint;
@@ -279,6 +480,7 @@ class FortuneCookie {
         }
     }
     drawCookie() {
+        drawClosedCookie(this.canvasClosed);
         drawCookieHalf(this.canvasLeft, "left");
         drawCookieHalf(this.canvasRight, "right");
     }
@@ -308,7 +510,6 @@ class FortuneCookie {
             return;
         this.isCracked = true;
         this.instruction.classList.add("hidden");
-        this.introCard.classList.add("hidden");
         this.statusNote.textContent = this.getStrings().openingStatus;
         if (!this.prefersReducedMotion) {
             this.scene.classList.add("shaking");
@@ -316,6 +517,9 @@ class FortuneCookie {
         setTimeout(() => {
             this.scene.classList.remove("shaking");
             this.scene.classList.add("cracked");
+            if (!this.prefersReducedMotion) {
+                this.scene.classList.add("crack-flash");
+            }
             this.spawnGlowParticles();
             this.showFortune();
         }, this.prefersReducedMotion ? 40 : 500);
@@ -327,12 +531,12 @@ class FortuneCookie {
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
         const container = document.getElementById("particles");
-        for (let i = 0; i < 35; i++) {
+        for (let i = 0; i < 50; i++) {
             const p = document.createElement("div");
             const angle = Math.random() * Math.PI * 2;
-            const distance = 60 + Math.random() * 180;
-            const size = 3 + Math.random() * 7;
-            const colors = ["#ffd700", "#ff8c00", "#ffec8b", "#ffe066"];
+            const distance = 80 + Math.random() * 220;
+            const size = 3 + Math.random() * 9;
+            const colors = ["#ffd700", "#ff8c00", "#ffec8b", "#ffe066", "#fff5cc", "#ffaa33"];
             p.style.cssText = `
         position: fixed;
         left: ${cx}px; top: ${cy}px;
@@ -379,17 +583,68 @@ class FortuneCookie {
         this.isCracked = false;
         this.currentFortuneIdx = -1;
         this.scene.classList.remove("cracked");
+        this.scene.classList.remove("crack-flash");
         this.miniSlip.classList.remove("visible");
         this.resetBtn.classList.remove("visible");
         this.instruction.classList.remove("hidden");
-        this.introCard.classList.remove("hidden");
         if (this.isReady) {
             const t = this.getStrings();
             this.instruction.textContent = t.instruction;
             this.statusNote.textContent = t.statusHint;
         }
         this.scene.focus();
+        history.replaceState(null, "", location.pathname);
         this.drawCookie();
+    }
+    async shareFortune() {
+        const t = this.getStrings();
+        const hash = `#f=${this.currentFortuneIdx}&l=${this.currentLucky}&t=${this.currentTagIdx}&c=${this.currentColorIdx}&lang=${this.lang}`;
+        const url = `${location.origin}${location.pathname}${hash}`;
+        if (navigator.share) {
+            try {
+                await navigator.share({ url, title: t.title });
+                return;
+            }
+            catch (_a) {
+                // fall through to clipboard
+            }
+        }
+        try {
+            await navigator.clipboard.writeText(url);
+            this.showToast(t.shareToast);
+        }
+        catch (_b) {
+            prompt(this.lang === "ko" ? "URL을 복사하세요:" : "Copy this URL:", url);
+        }
+    }
+    showToast(message) {
+        const toast = document.getElementById("shareToast");
+        toast.textContent = message;
+        toast.classList.add("visible");
+        setTimeout(() => toast.classList.remove("visible"), 2500);
+    }
+    loadFromHash() {
+        var _a, _b, _c, _d;
+        const hash = location.hash;
+        if (!hash)
+            return false;
+        const params = new URLSearchParams(hash.slice(1));
+        const f = parseInt((_a = params.get("f")) !== null && _a !== void 0 ? _a : "", 10);
+        const l = parseInt((_b = params.get("l")) !== null && _b !== void 0 ? _b : "", 10);
+        const t = parseInt((_c = params.get("t")) !== null && _c !== void 0 ? _c : "", 10);
+        const c = parseInt((_d = params.get("c")) !== null && _d !== void 0 ? _d : "", 10);
+        const lang = params.get("lang");
+        if (isNaN(f) || isNaN(l) || isNaN(t) || isNaN(c))
+            return false;
+        if (lang === "ko" || lang === "en") {
+            this.lang = lang;
+            localStorage.setItem("playground-lang", lang);
+        }
+        this.currentFortuneIdx = f;
+        this.currentLucky = l;
+        this.currentTagIdx = t;
+        this.currentColorIdx = c;
+        return true;
     }
 }
 document.addEventListener("DOMContentLoaded", () => {

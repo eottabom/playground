@@ -180,10 +180,8 @@
       "toggle": "EN",
       "keywordLabel": "오늘의 키워드",
       "colorLabel": "행운의 색",
-      "introLabelOne": "Inside today",
-      "introValueOne": "오늘의 기분을 흔들 메시지가 안에 들어 있어요.",
-      "introLabelTwo": "Fortune hint",
-      "introValueTwo": "행운의 숫자와 오늘의 키워드를 보여줍니다.",
+      "share": "공유하기",
+      "shareToast": "링크가 복사됐어요 ✓",
       "sceneAria": "포츈쿠키 열기",
       "luckyColors": [
         {
@@ -382,10 +380,8 @@
       "toggle": "한국어",
       "keywordLabel": "Keyword",
       "colorLabel": "Lucky Color",
-      "introLabelOne": "Inside today",
-      "introValueOne": "There is a short message inside waiting to shake up your day.",
-      "introLabelTwo": "Fortune hint",
-      "introValueTwo": "You will get a lucky number and today's keyword.",
+      "share": "Share",
+      "shareToast": "Link copied ✓",
       "sceneAria": "Open fortune cookie",
       "luckyColors": [
         {
