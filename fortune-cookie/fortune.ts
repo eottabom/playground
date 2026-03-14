@@ -106,11 +106,11 @@ function drawClosedCookie(canvas: HTMLCanvasElement): void {
 
   ctx.save();
   const body = ctx.createRadialGradient(w * 0.38, h * 0.28, w * 0.04, cx, cy, w * 0.44);
-  body.addColorStop(0, "#f5e6c8");
-  body.addColorStop(0.20, "#e8d09a");
-  body.addColorStop(0.45, "#dbb87a");
-  body.addColorStop(0.70, "#c49550");
-  body.addColorStop(1, "#a67538");
+  body.addColorStop(0, "#d9be88");
+  body.addColorStop(0.20, "#c8a468");
+  body.addColorStop(0.45, "#b08848");
+  body.addColorStop(0.70, "#906830");
+  body.addColorStop(1, "#6e4818");
   ctx.fillStyle = body;
   ctx.fill(path);
 
@@ -325,11 +325,11 @@ function drawCookieHalf(canvas: HTMLCanvasElement, side: "left" | "right"): void
   const lightX  = isLeft ? outerX + w * 0.1 : outerX - w * 0.1;
   const lightY  = cy - h * 0.19;
   const mainGrad = ctx.createRadialGradient(lightX, lightY, w * 0.02, bodyCx, bodyCy, w * 0.56);
-  mainGrad.addColorStop(0,    "#f2e2be");
-  mainGrad.addColorStop(0.24, "#e5cb8e");
-  mainGrad.addColorStop(0.52, "#d4af6a");
-  mainGrad.addColorStop(0.78, "#b8893e");
-  mainGrad.addColorStop(1.0,  "#956828");
+  mainGrad.addColorStop(0,    "#d0b070");
+  mainGrad.addColorStop(0.24, "#c09858");
+  mainGrad.addColorStop(0.52, "#a87c3c");
+  mainGrad.addColorStop(0.78, "#886028");
+  mainGrad.addColorStop(1.0,  "#604014");
   ctx.fillStyle = mainGrad;
   ctx.fillRect(0, 0, w, h);
 
@@ -426,8 +426,8 @@ function drawCookieHalf(canvas: HTMLCanvasElement, side: "left" | "right"): void
     const t2  = (i + 1) / steps;
     const ey1 = (cy - pinchH) + t1 * pinchH * 2;
     const ey2 = (cy - pinchH) + t2 * pinchH * 2;
-    const j1  = Math.sin(t1 * 21) * (w * 0.016) + Math.cos(t1 * 33) * (w * 0.008);
-    const j2  = Math.sin(t2 * 21) * (w * 0.016) + Math.cos(t2 * 33) * (w * 0.008);
+    const j1  = Math.sin(t1 * 21) * (w * 0.038) + Math.cos(t1 * 33) * (w * 0.018);
+    const j2  = Math.sin(t2 * 21) * (w * 0.038) + Math.cos(t2 * 33) * (w * 0.018);
     ctx.beginPath();
     ctx.moveTo(breakX + j1, ey1);
     ctx.lineTo(breakX + j2, ey2);
@@ -448,7 +448,7 @@ function drawCookieHalf(canvas: HTMLCanvasElement, side: "left" | "right"): void
   for (let i = 0; i <= steps; i++) {
     const t      = i / steps;
     const ey     = (cy - pinchH) + t * pinchH * 2;
-    const jitter = Math.sin(t * 21) * (w * 0.006) + Math.cos(t * 33) * (w * 0.003);
+    const jitter = Math.sin(t * 21) * (w * 0.018) + Math.cos(t * 33) * (w * 0.009);
     const ex     = breakX + jitter;
     if (i === 0) ctx.moveTo(ex, ey);
     else ctx.lineTo(ex, ey);
@@ -633,22 +633,11 @@ class FortuneCookie {
   ): void {
     this.miniSlipText.textContent = formatFortuneText(text);
     this.miniSlipMeta.innerHTML = `
-      <span class="meta-chip">
-        <span aria-hidden="true">🔮</span>
-        <span class="meta-label">${luckyLabel}</span>
-        <strong>${this.currentLucky}</strong>
-      </span>
-      <span class="meta-chip keyword">
-        <span class="meta-label">${keywordLabel}</span>
-        <strong>${tag}</strong>
-      </span>
-      <span class="meta-chip color-chip">
-        <span class="color-swatch" style="background:${color.hex}" tabindex="0" aria-label="${colorLabel} ${color.hex}">
-          <span class="color-tooltip">${color.hex}</span>
-        </span>
-        <span class="meta-label">${colorLabel}</span>
-        <strong>${color.name}</strong>
-      </span>
+      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "숫자" : "Number"}:</span> <strong>${this.currentLucky}</strong></span>
+      <span class="meta-dot">·</span>
+      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "키워드" : "Keyword"}:</span> <strong>${tag}</strong></span>
+      <span class="meta-dot">·</span>
+      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "색상" : "Color"}:</span> <span class="color-swatch" style="background:${color.hex}"></span> <strong>${color.name}</strong></span>
     `;
   }
 
