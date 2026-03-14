@@ -768,53 +768,58 @@ class FortuneCookie {
     const idx = Math.min(this.currentFortuneIdx, t.messages.length - 1);
     const text = t.messages[idx];
     const tag = t.tags[this.currentTagIdx % t.tags.length];
+    const color = t.luckyColors[this.currentColorIdx % t.luckyColors.length];
     const S = 1080;
     const cv = document.createElement("canvas");
     cv.width = S; cv.height = S;
     const ctx = cv.getContext("2d")!;
 
-    const bg = ctx.createRadialGradient(S/2, S*0.36, S*0.08, S/2, S*0.5, S*0.85);
-    bg.addColorStop(0, "#4a5cd6"); bg.addColorStop(1, "#252a7a");
+    // Background - match site theme
+    const bg = ctx.createLinearGradient(0, 0, 0, S);
+    bg.addColorStop(0, "#12071c"); bg.addColorStop(0.5, "#1c1231"); bg.addColorStop(1, "#0d233f");
     ctx.fillStyle = bg; ctx.fillRect(0, 0, S, S);
+    const glow = ctx.createRadialGradient(S/2, S*0.35, 0, S/2, S*0.35, S*0.5);
+    glow.addColorStop(0, "rgba(255,212,107,0.08)"); glow.addColorStop(1, "transparent");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, S, S);
 
-    ctx.save(); ctx.translate(S*0.48, S*0.30); ctx.scale(3.2, 3.2);
-    ctx.beginPath(); ctx.ellipse(0, 82, 50, 10, 0, 0, Math.PI*2);
-    ctx.fillStyle = "rgba(0,0,0,0.18)"; ctx.fill();
-    ctx.save(); ctx.translate(28, 38); ctx.rotate(0.22);
-    ctx.fillStyle = "#fffdf5"; ctx.beginPath(); ctx.roundRect(-22, -12, 58, 48, 4); ctx.fill();
-    ctx.strokeStyle = "#c0c0c0"; ctx.lineWidth = 1.2; ctx.stroke();
-    ctx.font = "bold 26px sans-serif"; ctx.fillStyle = "#3b4cca";
-    ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", 7, 12);
-    ctx.restore();
-    ctx.beginPath(); ctx.moveTo(8,-72);
-    ctx.bezierCurveTo(-22,-75,-72,-42,-76,6); ctx.bezierCurveTo(-73,46,-34,70,8,72);
-    ctx.bezierCurveTo(30,66,52,34,50,0); ctx.bezierCurveTo(46,-36,26,-66,8,-72); ctx.closePath();
-    const ck = ctx.createLinearGradient(-68,-55,45,55);
-    ck.addColorStop(0,"#f5d88a"); ck.addColorStop(0.5,"#e8b550"); ck.addColorStop(1,"#c88a30");
-    ctx.fillStyle = ck; ctx.fill();
-    ctx.strokeStyle = "#4a3218"; ctx.lineWidth = 3.2; ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(3,-65); ctx.bezierCurveTo(-10,-20,-7,22,3,65);
-    ctx.strokeStyle = "#9a6020"; ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(-28,-28,22,16,-0.4,0,Math.PI*2);
-    ctx.fillStyle = "rgba(255,240,200,0.22)"; ctx.fill();
-    ctx.restore();
+    // Title
+    ctx.font = "700 52px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#ffd46b";
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(`🥠 ${t.title}`, S/2, S*0.12);
 
-    const cardX = S*0.08, cardY = S*0.56, cardW = S*0.84, cardH = S*0.34;
-    ctx.fillStyle = "rgba(8,6,24,0.72)"; ctx.beginPath(); ctx.roundRect(cardX,cardY,cardW,cardH,20); ctx.fill();
-    ctx.strokeStyle = "rgba(255,212,107,0.2)"; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.roundRect(cardX,cardY,cardW,cardH,20); ctx.stroke();
+    // Divider
+    ctx.strokeStyle = "rgba(255,212,107,0.18)"; ctx.lineWidth = 1; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(S*0.15, S*0.19); ctx.lineTo(S*0.85, S*0.19); ctx.stroke();
+    ctx.setLineDash([]);
 
-    ctx.font = "600 36px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#fff7e8";
-    ctx.textAlign = "center"; ctx.textBaseline = "top";
-    const lines = this.wrapText(ctx, text, cardW - 72);
-    const lh = 50, sy = cardY + (cardH - lines.length*lh - 36)/2 + 8;
-    lines.forEach((l, i) => ctx.fillText(l, S/2, sy + i*lh));
+    // Fortune text
+    ctx.font = "600 44px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#fff7e8";
+    const lines = this.wrapText(ctx, text, S*0.72);
+    const lh = 62;
+    const blockH = lines.length * lh;
+    const textY = S*0.48 - blockH/2;
+    lines.forEach((l, i) => ctx.fillText(l, S/2, textY + i*lh));
 
-    ctx.font = "500 26px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,212,107,0.6)";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(`🔮 ${t.luckyLabel} ${this.currentLucky}  ·  ${tag}`, S/2, cardY+cardH-16);
-    ctx.font = "bold 28px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.4)";
-    ctx.fillText(t.title, S/2, S-32);
+    // Bottom divider
+    ctx.strokeStyle = "rgba(255,212,107,0.18)"; ctx.setLineDash([6,6]);
+    ctx.beginPath(); ctx.moveTo(S*0.15, S*0.78); ctx.lineTo(S*0.85, S*0.78); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Meta chips
+    ctx.font = "500 30px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,248,230,0.7)";
+    ctx.fillText(`🔮 ${t.luckyLabel} ${this.currentLucky}  ·  ${tag}`, S/2, S*0.85);
+
+    // Color chip
+    ctx.fillStyle = color.hex;
+    ctx.beginPath(); ctx.roundRect(S/2 - 60, S*0.89, 22, 22, 4); ctx.fill();
+    ctx.font = "500 28px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,248,230,0.6)";
+    ctx.textBaseline = "middle"; ctx.textAlign = "left";
+    ctx.fillText(`${t.colorLabel} ${color.name}`, S/2 - 32, S*0.90);
+
+    // Footer
+    ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+    ctx.font = "400 24px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.2)";
+    ctx.fillText("eottabom.github.io", S/2, S - 36);
 
     return new Promise((resolve, reject) => {
       cv.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob failed"))), "image/png");
