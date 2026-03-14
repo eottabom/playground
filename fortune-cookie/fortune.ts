@@ -106,11 +106,11 @@ function drawClosedCookie(canvas: HTMLCanvasElement): void {
 
   ctx.save();
   const body = ctx.createRadialGradient(w * 0.38, h * 0.28, w * 0.04, cx, cy, w * 0.44);
-  body.addColorStop(0, "#fce9b6");
-  body.addColorStop(0.20, "#f5d57c");
-  body.addColorStop(0.45, "#e8b44d");
-  body.addColorStop(0.70, "#d49332");
-  body.addColorStop(1, "#b07025");
+  body.addColorStop(0, "#f5e6c8");
+  body.addColorStop(0.20, "#e8d09a");
+  body.addColorStop(0.45, "#dbb87a");
+  body.addColorStop(0.70, "#c49550");
+  body.addColorStop(1, "#a67538");
   ctx.fillStyle = body;
   ctx.fill(path);
 
@@ -325,11 +325,11 @@ function drawCookieHalf(canvas: HTMLCanvasElement, side: "left" | "right"): void
   const lightX  = isLeft ? outerX + w * 0.1 : outerX - w * 0.1;
   const lightY  = cy - h * 0.19;
   const mainGrad = ctx.createRadialGradient(lightX, lightY, w * 0.02, bodyCx, bodyCy, w * 0.56);
-  mainGrad.addColorStop(0,    "#fae7ab");
-  mainGrad.addColorStop(0.24, "#f1d27a");
-  mainGrad.addColorStop(0.52, "#dfab4e");
-  mainGrad.addColorStop(0.78, "#c07f2f");
-  mainGrad.addColorStop(1.0,  "#9d5e22");
+  mainGrad.addColorStop(0,    "#f2e2be");
+  mainGrad.addColorStop(0.24, "#e5cb8e");
+  mainGrad.addColorStop(0.52, "#d4af6a");
+  mainGrad.addColorStop(0.78, "#b8893e");
+  mainGrad.addColorStop(1.0,  "#956828");
   ctx.fillStyle = mainGrad;
   ctx.fillRect(0, 0, w, h);
 
@@ -851,12 +851,18 @@ class FortuneCookie {
         await navigator.share({ files: [file], title: t.title, url });
         return;
       }
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "fortune-cookie.png";
-      a.click();
-      URL.revokeObjectURL(a.href);
-      this.showToast(this.lang === "ko" ? "이미지가 저장됐어요 ✓" : "Image saved ✓");
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        this.showToast(this.lang === "ko" ? "이미지가 복사됐어요 ✓" : "Image copied ✓");
+        return;
+      } catch {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "fortune-cookie.png";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        this.showToast(this.lang === "ko" ? "이미지가 저장됐어요 ✓" : "Image saved ✓");
+      }
       return;
     } catch {
       // fall through
