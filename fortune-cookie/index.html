@@ -197,6 +197,14 @@
       "colorLabel": "행운의 색",
       "share": "공유하기",
       "shareToast": "링크가 복사됐어요 ✓",
+      "numLabel": "숫자",
+      "kwLabel": "키워드",
+      "clrLabel": "색상",
+      "imageCopied": "이미지가 복사됐어요 ✓",
+      "imageSaved": "이미지가 저장됐어요 ✓",
+      "shareCta": "🥠 나도 쿠키 깨러 가기",
+      "newCookie": "새쿠키",
+      "shareShort": "공유",
       "sceneAria": "포츈쿠키 열기",
       "luckyColors": [
         {
@@ -386,7 +394,27 @@
         "A highlight scene drops into your day out of nowhere.",
         "If you go out, you will probably come back with a story and at least one screenshot-worthy moment.",
         "You look better, sound sharper, and get luckier than average today.",
-        "Take one shot. The universe appears to be watching with interest."
+        "Take one shot. The universe appears to be watching with interest.",
+        "Today's forecast: surprisingly decent. Lunch menu still undecided though.",
+        "The cosmos whispers to you: one more coffee is absolutely fine.",
+        "Luck is on its way. But right now, Wi-Fi matters more.",
+        "Your future is bright. Though today, a nap might matter more.",
+        "Something new might happen today. Or it might just be a normal day. That is also great.",
+        "Stay alert. Someone may be eyeing your snacks today.",
+        "Your efforts will be rewarded soon. Probably in the form of fried chicken.",
+        "Today's keywords: calm, focus, and snacks.",
+        "An unexpected opportunity is coming. But if you mute your alarm, it is gone.",
+        "The universe is cheering for you. But deadlines still exist.",
+        "A small stroke of luck today. Like the elevator arriving instantly.",
+        "Good things are coming soon. Most likely a delivery package.",
+        "You will learn something today. For example, why two coffees are necessary.",
+        "A critical decision is approaching. Most likely about what to eat for lunch.",
+        "Your abilities are stronger than you think. Especially your late-night food ordering skills.",
+        "Today's advice: save your code and commit. Do not recover with tears.",
+        "Your future is bright. Although it could just be your monitor brightness.",
+        "An unexpected message may arrive. Could be spam, so do not get too excited.",
+        "Something will make you laugh today. It might be a bug you wrote, so the laugh may be bittersweet.",
+        "The fortune cookie says: do not trust this cookie too much. But go ahead and click again."
       ],
       "statusHint": "",
       "openingStatus": "Opening the cookie...",
@@ -397,6 +425,14 @@
       "colorLabel": "Lucky Color",
       "share": "Share",
       "shareToast": "Link copied ✓",
+      "numLabel": "Number",
+      "kwLabel": "Keyword",
+      "clrLabel": "Color",
+      "imageCopied": "Image copied ✓",
+      "imageSaved": "Image saved ✓",
+      "shareCta": "🥠 Crack My Cookie",
+      "newCookie": "New",
+      "shareShort": "Share",
       "sceneAria": "Open fortune cookie",
       "luckyColors": [
         {
@@ -453,18 +489,22 @@
     <div class="scene-aura"></div>
     <div class="scene-ring"></div>
     <div class="cookie-closed">
-      <canvas class="cookie-canvas" id="canvasClosed" width="360" height="300"></canvas>
+      <img src="fortune-img.png" alt="" draggable="false" class="cookie-img">
     </div>
     <div class="cookie-half cookie-left">
-      <canvas class="cookie-canvas" id="canvasLeft" width="320" height="400"></canvas>
+      <img src="fortune-img.png" alt="" draggable="false" class="cookie-img cookie-clip-left">
     </div>
     <div class="cookie-half cookie-right">
-      <canvas class="cookie-canvas" id="canvasRight" width="320" height="400"></canvas>
+      <img src="fortune-img.png" alt="" draggable="false" class="cookie-img cookie-clip-right">
     </div>
     <div class="mini-slip" id="miniSlip">
       <div class="slip-text" id="miniSlipText"></div>
       <div class="slip-meta" id="miniSlipMeta"></div>
-      <button class="share-btn" id="shareBtn">공유하기</button>
+      <div class="slip-actions">
+        <button class="slip-btn reset-action" id="resetBtn2">🔄 <span id="resetBtnText2">새쿠키</span></button>
+        <button class="slip-btn share-action" id="shareBtn">📤 <span id="shareBtnText">공유</span></button>
+
+      </div>
     </div>
     <div class="cookie-pedestal"></div>
   </div>
@@ -472,7 +512,6 @@
   <p class="instruction" id="instruction">쿠키를 클릭하세요</p>
   <p class="status-note" id="statusNote" aria-live="polite"></p>
 
-  <button class="reset-btn" id="resetBtn">새 쿠키 가져오기</button>
 
   <footer style="margin-top:auto; padding:20px; text-align:center; color:rgba(255,255,255,0.3); font-size:0.8rem;">
     <a href="https://eottabom.github.io" style="color:rgba(255,255,255,0.4); text-decoration:none; display:inline-flex; align-items:center; gap:4px;">

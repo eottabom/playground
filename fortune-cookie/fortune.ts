@@ -14,6 +14,14 @@ interface I18nStrings {
   sceneAria: string;
   share: string;
   shareToast: string;
+  numLabel: string;
+  kwLabel: string;
+  clrLabel: string;
+  imageCopied: string;
+  imageSaved: string;
+  shareCta: string;
+  newCookie: string;
+  shareShort: string;
 }
 
 interface LuckyColor {
@@ -32,429 +40,12 @@ interface I18nFileData {
   en: { fortune: FortuneLocaleData };
 }
 
-function createSeededRandom(seed: number): () => number {
-  let value = seed >>> 0;
-  return () => {
-    value = (value * 1664525 + 1013904223) >>> 0;
-    return value / 4294967296;
-  };
-}
-
-function resizeCanvas(canvas: HTMLCanvasElement): void {
-  const ratio = Math.min(window.devicePixelRatio || 1, 2);
-  const cssWidth = canvas.clientWidth || Number(canvas.getAttribute("width")) || 320;
-  const cssHeight = canvas.clientHeight || Number(canvas.getAttribute("height")) || 400;
-  canvas.width = Math.round(cssWidth * ratio);
-  canvas.height = Math.round(cssHeight * ratio);
-}
-
 function formatFortuneText(text: string): string {
   const sentences = text.match(/[^.!?]+[.!?]?/g)?.map((part) => part.trim()).filter(Boolean) ?? [text];
   if (sentences.length <= 1) {
     return text;
   }
   return [sentences[0], sentences.slice(1).join(" ")].join("\n");
-}
-
-function drawClosedCookie(canvas: HTMLCanvasElement): void {
-  resizeCanvas(canvas);
-  const ctx = canvas.getContext("2d")!;
-  const w = canvas.width;
-  const h = canvas.height;
-  const random = createSeededRandom(7);
-  ctx.clearRect(0, 0, w, h);
-
-  const cx = w * 0.5;
-  const cy = h * 0.58;
-  const topY = h * 0.16;
-  const bottomY = h * 0.84;
-  const wingOuter = w * 0.19;
-  const wingInner = w * 0.09;
-
-  const path = new Path2D();
-  path.moveTo(cx, topY);
-  path.bezierCurveTo(
-    cx - wingInner, h * 0.2,
-    cx - wingOuter, h * 0.29,
-    cx - wingOuter, h * 0.42
-  );
-  path.bezierCurveTo(
-    cx - wingOuter, h * 0.58,
-    cx - wingInner * 1.25, h * 0.76,
-    cx, bottomY
-  );
-  path.bezierCurveTo(
-    cx + wingInner * 1.25, h * 0.76,
-    cx + wingOuter, h * 0.58,
-    cx + wingOuter, h * 0.42
-  );
-  path.bezierCurveTo(
-    cx + wingOuter, h * 0.29,
-    cx + wingInner, h * 0.2,
-    cx, topY
-  );
-  path.closePath();
-
-  const shadow = ctx.createRadialGradient(cx, h * 0.87, 0, cx, h * 0.87, w * 0.22);
-  shadow.addColorStop(0, "rgba(0,0,0,0.22)");
-  shadow.addColorStop(0.5, "rgba(0,0,0,0.08)");
-  shadow.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = shadow;
-  ctx.beginPath();
-  ctx.ellipse(cx, h * 0.87, w * 0.17, h * 0.04, 0, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.save();
-  const body = ctx.createRadialGradient(w * 0.38, h * 0.28, w * 0.04, cx, cy, w * 0.44);
-  body.addColorStop(0, "#d9be88");
-  body.addColorStop(0.20, "#c8a468");
-  body.addColorStop(0.45, "#b08848");
-  body.addColorStop(0.70, "#906830");
-  body.addColorStop(1, "#6e4818");
-  ctx.fillStyle = body;
-  ctx.fill(path);
-
-  ctx.clip(path);
-
-  // Ambient occlusion - darken edges
-  const ao = ctx.createRadialGradient(cx, cy, w * 0.06, cx, cy, w * 0.26);
-  ao.addColorStop(0, "rgba(0,0,0,0)");
-  ao.addColorStop(0.55, "rgba(0,0,0,0)");
-  ao.addColorStop(0.78, "rgba(80,40,10,0.14)");
-  ao.addColorStop(1.0, "rgba(60,25,5,0.32)");
-  ctx.fillStyle = ao;
-  ctx.fillRect(0, 0, w, h);
-
-  const leftShade = ctx.createLinearGradient(cx - wingOuter, 0, cx - wingOuter * 0.4, 0);
-  leftShade.addColorStop(0, "rgba(100,55,15,0.28)");
-  leftShade.addColorStop(1, "rgba(100,55,15,0)");
-  ctx.fillStyle = leftShade;
-  ctx.fillRect(0, 0, w, h);
-
-  const rightShade = ctx.createLinearGradient(cx + wingOuter, 0, cx + wingOuter * 0.4, 0);
-  rightShade.addColorStop(0, "rgba(100,55,15,0.30)");
-  rightShade.addColorStop(1, "rgba(100,55,15,0)");
-  ctx.fillStyle = rightShade;
-  ctx.fillRect(0, 0, w, h);
-
-  // Top/bottom pinch darkening
-  const topDk = ctx.createLinearGradient(0, topY, 0, topY + h * 0.14);
-  topDk.addColorStop(0, "rgba(90,45,10,0.32)");
-  topDk.addColorStop(1, "rgba(90,45,10,0)");
-  ctx.fillStyle = topDk;
-  ctx.fillRect(0, 0, w, h);
-
-  const botDk = ctx.createLinearGradient(0, bottomY, 0, bottomY - h * 0.14);
-  botDk.addColorStop(0, "rgba(90,45,10,0.32)");
-  botDk.addColorStop(1, "rgba(90,45,10,0)");
-  ctx.fillStyle = botDk;
-  ctx.fillRect(0, 0, w, h);
-
-  // Main specular highlight - upper left
-  const highlight = ctx.createRadialGradient(w * 0.36, h * 0.30, 0, w * 0.36, h * 0.30, w * 0.24);
-  highlight.addColorStop(0, "rgba(255,252,235,0.50)");
-  highlight.addColorStop(0.25, "rgba(255,248,220,0.28)");
-  highlight.addColorStop(0.55, "rgba(255,245,210,0.08)");
-  highlight.addColorStop(1, "rgba(255,240,200,0)");
-  ctx.fillStyle = highlight;
-  ctx.fillRect(0, 0, w, h);
-
-  // Secondary highlight - upper right
-  const highlight2 = ctx.createRadialGradient(w * 0.62, h * 0.34, 0, w * 0.62, h * 0.34, w * 0.18);
-  highlight2.addColorStop(0, "rgba(255,250,230,0.20)");
-  highlight2.addColorStop(0.5, "rgba(255,248,220,0.05)");
-  highlight2.addColorStop(1, "rgba(255,240,200,0)");
-  ctx.fillStyle = highlight2;
-  ctx.fillRect(0, 0, w, h);
-
-  // Glaze sheen - diagonal reflection
-  const glaze = ctx.createLinearGradient(w * 0.25, h * 0.15, w * 0.75, h * 0.85);
-  glaze.addColorStop(0, "rgba(255,255,255,0)");
-  glaze.addColorStop(0.30, "rgba(255,255,255,0.05)");
-  glaze.addColorStop(0.48, "rgba(255,255,255,0.10)");
-  glaze.addColorStop(0.65, "rgba(255,255,255,0.03)");
-  glaze.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = glaze;
-  ctx.fillRect(0, 0, w, h);
-
-  // Center fold seam
-  ctx.strokeStyle = "rgba(145,92,34,0.22)";
-  ctx.lineWidth = w * 0.007;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  ctx.moveTo(cx, topY + h * 0.03);
-  ctx.bezierCurveTo(cx - wingInner * 0.45, h * 0.32, cx - wingInner * 0.42, h * 0.67, cx, bottomY - h * 0.03);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(cx, topY + h * 0.03);
-  ctx.bezierCurveTo(cx + wingInner * 0.45, h * 0.32, cx + wingInner * 0.42, h * 0.67, cx, bottomY - h * 0.03);
-  ctx.stroke();
-
-  // Soft fold shadow
-  const foldSh = ctx.createLinearGradient(cx - w * 0.035, 0, cx + w * 0.035, 0);
-  foldSh.addColorStop(0, "rgba(0,0,0,0)");
-  foldSh.addColorStop(0.3, "rgba(90,50,15,0.06)");
-  foldSh.addColorStop(0.5, "rgba(90,50,15,0.10)");
-  foldSh.addColorStop(0.7, "rgba(90,50,15,0.06)");
-  foldSh.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = foldSh;
-  ctx.fillRect(cx - w * 0.05, topY, w * 0.10, bottomY - topY);
-
-  // Surface texture - fine dots
-  for (let i = 0; i < 45; i++) {
-    const angle = random() * Math.PI * 2;
-    const dist = random() * 0.80;
-    const px = cx + Math.cos(angle) * wingOuter * 0.8 * dist;
-    const py = cy + Math.sin(angle) * (bottomY - topY) * 0.38 * dist;
-    ctx.beginPath();
-    ctx.arc(px, py, w * (0.0012 + random() * 0.0028), 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(118,72,20,${0.04 + random() * 0.05})`;
-    ctx.fill();
-  }
-
-  // Larger baked spots
-  for (let i = 0; i < 10; i++) {
-    const angle = random() * Math.PI * 2;
-    const dist = 0.12 + random() * 0.58;
-    const px = cx + Math.cos(angle) * wingOuter * 0.65 * dist;
-    const py = cy + Math.sin(angle) * (bottomY - topY) * 0.32 * dist;
-    const gs = w * (0.003 + random() * 0.006);
-    ctx.save();
-    ctx.translate(px, py);
-    ctx.rotate(random() * Math.PI);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, gs, gs * 0.55, 0, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(140,80,25,${0.03 + random() * 0.04})`;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  ctx.restore();
-}
-
-function drawCookieHalf(canvas: HTMLCanvasElement, side: "left" | "right"): void {
-  resizeCanvas(canvas);
-  const ctx = canvas.getContext("2d")!;
-  const w = canvas.width;
-  const h = canvas.height;
-  const random = createSeededRandom(side === "left" ? 17 : 29);
-  ctx.clearRect(0, 0, w, h);
-
-  const isLeft = side === "left";
-
-  // Break edge (faces scene center), outer edge (far edge of the folded wafer)
-  const breakX = isLeft ? w * 0.535 : w * 0.465;
-  const outerX  = isLeft ? w * 0.22 : w * 0.78;
-  const cy      = h * 0.52;
-  const pinchH  = h * 0.13;
-
-  // Folded wafer silhouette: taller and more tucked in so it reads as a folded cookie, not a dumpling.
-  function cookiePath(): void {
-    ctx.beginPath();
-    if (isLeft) {
-      ctx.moveTo(breakX, cy - pinchH);
-      ctx.bezierCurveTo(
-        w * 0.46, cy - h * 0.29,
-        outerX + w * 0.13, cy - h * 0.2,
-        outerX + w * 0.01, cy - h * 0.015
-      );
-      ctx.bezierCurveTo(
-        outerX + w * 0.035, cy + h * 0.075,
-        outerX + w * 0.12, cy + h * 0.2,
-        breakX, cy + pinchH
-      );
-    } else {
-      ctx.moveTo(breakX, cy - pinchH);
-      ctx.bezierCurveTo(
-        w * 0.54, cy - h * 0.29,
-        outerX - w * 0.13, cy - h * 0.2,
-        outerX - w * 0.01, cy - h * 0.015
-      );
-      ctx.bezierCurveTo(
-        outerX - w * 0.035, cy + h * 0.075,
-        outerX - w * 0.12, cy + h * 0.2,
-        breakX, cy + pinchH
-      );
-    }
-    ctx.closePath(); // straight line = break edge
-  }
-
-  // Approximate visual center of this cookie half
-  const bodyCx = isLeft ? w * 0.425 : w * 0.575;
-  const bodyCy = cy;
-
-  // Drop shadow beneath the cookie
-  ctx.save();
-  const shadowGrad = ctx.createRadialGradient(
-    bodyCx, cy + h * 0.41, 0,
-    bodyCx, cy + h * 0.41, w * 0.40
-  );
-  shadowGrad.addColorStop(0,    "rgba(0,0,0,0.22)");
-  shadowGrad.addColorStop(0.55, "rgba(0,0,0,0.09)");
-  shadowGrad.addColorStop(1,    "rgba(0,0,0,0)");
-  ctx.beginPath();
-  ctx.ellipse(bodyCx, cy + h * 0.36, w * 0.28, h * 0.042, 0, 0, Math.PI * 2);
-  ctx.fillStyle = shadowGrad;
-  ctx.fill();
-  ctx.restore();
-
-  // Fold seam to suggest the original wafer being bent inward
-  ctx.save();
-  cookiePath();
-  ctx.clip();
-  ctx.strokeStyle = "rgba(142, 92, 34, 0.34)";
-  ctx.lineWidth = w * 0.01;
-  ctx.lineCap = "round";
-  ctx.beginPath();
-  if (isLeft) {
-    ctx.moveTo(breakX - w * 0.05, cy - h * 0.12);
-    ctx.quadraticCurveTo(outerX + w * 0.11, cy, breakX - w * 0.05, cy + h * 0.12);
-  } else {
-    ctx.moveTo(breakX + w * 0.05, cy - h * 0.12);
-    ctx.quadraticCurveTo(outerX - w * 0.11, cy, breakX + w * 0.05, cy + h * 0.12);
-  }
-  ctx.stroke();
-  ctx.restore();
-
-  // ── Cookie body (all layers clipped to wing shape) ──
-  ctx.save();
-  cookiePath();
-  ctx.clip();
-
-  // Main colour — warm golden‑brown, light source from outer-upper corner
-  const lightX  = isLeft ? outerX + w * 0.1 : outerX - w * 0.1;
-  const lightY  = cy - h * 0.19;
-  const mainGrad = ctx.createRadialGradient(lightX, lightY, w * 0.02, bodyCx, bodyCy, w * 0.56);
-  mainGrad.addColorStop(0,    "#d0b070");
-  mainGrad.addColorStop(0.24, "#c09858");
-  mainGrad.addColorStop(0.52, "#a87c3c");
-  mainGrad.addColorStop(0.78, "#886028");
-  mainGrad.addColorStop(1.0,  "#604014");
-  ctx.fillStyle = mainGrad;
-  ctx.fillRect(0, 0, w, h);
-
-  // Edge/rim darkening
-  const rimGrad = ctx.createRadialGradient(bodyCx, bodyCy, w * 0.14, bodyCx, bodyCy, w * 0.5);
-  rimGrad.addColorStop(0,    "rgba(0,0,0,0)");
-  rimGrad.addColorStop(0.62, "rgba(0,0,0,0)");
-  rimGrad.addColorStop(0.8, "rgba(72,36,8,0.18)");
-  rimGrad.addColorStop(1.0,  "rgba(72,36,8,0.4)");
-  ctx.fillStyle = rimGrad;
-  ctx.fillRect(0, 0, w, h);
-
-  // Top taper darkening (surface curls away from viewer)
-  const topDark = ctx.createLinearGradient(0, cy - pinchH, 0, cy - h * 0.28);
-  topDark.addColorStop(0, "rgba(82,40,7,0)");
-  topDark.addColorStop(1, "rgba(82,40,7,0.22)");
-  ctx.fillStyle = topDark;
-  ctx.fillRect(0, 0, w, h);
-
-  // Bottom taper darkening
-  const botDark = ctx.createLinearGradient(0, cy + pinchH, 0, cy + h * 0.3);
-  botDark.addColorStop(0, "rgba(82,40,7,0)");
-  botDark.addColorStop(1, "rgba(82,40,7,0.26)");
-  ctx.fillStyle = botDark;
-  ctx.fillRect(0, 0, w, h);
-
-  // Specular highlight
-  const specGrad = ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, w * 0.34);
-  specGrad.addColorStop(0,    "rgba(255,248,220,0.4)");
-  specGrad.addColorStop(0.42, "rgba(255,248,220,0.12)");
-  specGrad.addColorStop(1,    "rgba(255,248,215,0)");
-  ctx.fillStyle = specGrad;
-  ctx.fillRect(0, 0, w, h);
-
-  // Glaze sheen
-  const glazeDir = isLeft ? -1 : 1;
-  const glaze = ctx.createLinearGradient(
-    bodyCx + glazeDir * w * 0.18, cy - h * 0.2,
-    bodyCx - glazeDir * w * 0.18, cy + h * 0.18
-  );
-  glaze.addColorStop(0,    "rgba(255,255,255,0.12)");
-  glaze.addColorStop(0.45, "rgba(255,255,255,0)");
-  glaze.addColorStop(1,    "rgba(80,38,8,0.12)");
-  ctx.fillStyle = glaze;
-  ctx.fillRect(0, 0, w, h);
-
-  ctx.restore();
-
-  // ── Surface texture (sesame grain + pores) ──
-  ctx.save();
-  cookiePath();
-  ctx.clip();
-
-  for (let i = 0; i < 14; i++) {
-    const angle = random() * Math.PI * 2;
-    const dist  = 0.14 + random() * 0.64;
-    const bx    = bodyCx + Math.cos(angle) * w * 0.23 * dist;
-    const by    = bodyCy + Math.sin(angle) * h * 0.23 * dist;
-    const gs    = w * (0.004 + random() * 0.006);
-    ctx.save();
-    ctx.translate(bx, by);
-    ctx.rotate(random() * Math.PI);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, gs, gs * 0.52, 0, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(127,78,22,${0.08 + random() * 0.06})`;
-    ctx.fill();
-    ctx.restore();
-  }
-
-  for (let i = 0; i < 34; i++) {
-    const angle = random() * Math.PI * 2;
-    const dist  = random() * 0.78;
-    const bx    = bodyCx + Math.cos(angle) * w * 0.24 * dist;
-    const by    = bodyCy + Math.sin(angle) * h * 0.24 * dist;
-    ctx.beginPath();
-    ctx.arc(bx, by, w * (0.0016 + random() * 0.003), 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(118,72,20,${0.07 + random() * 0.06})`;
-    ctx.fill();
-  }
-
-  ctx.restore();
-
-  // ── Break-edge cross-section (shows cookie thickness) ──
-  const rimW   = w * 0.012;
-  const inward = isLeft ? -1 : 1;
-  const steps  = 12;
-
-  ctx.save();
-  cookiePath();
-  ctx.clip();
-
-  for (let i = 0; i < steps; i++) {
-    const t1  = i / steps;
-    const t2  = (i + 1) / steps;
-    const ey1 = (cy - pinchH) + t1 * pinchH * 2;
-    const ey2 = (cy - pinchH) + t2 * pinchH * 2;
-    const j1  = Math.sin(t1 * 21) * (w * 0.038) + Math.cos(t1 * 33) * (w * 0.018);
-    const j2  = Math.sin(t2 * 21) * (w * 0.038) + Math.cos(t2 * 33) * (w * 0.018);
-    ctx.beginPath();
-    ctx.moveTo(breakX + j1, ey1);
-    ctx.lineTo(breakX + j2, ey2);
-    ctx.lineTo(breakX + j2 + inward * rimW, ey2);
-    ctx.lineTo(breakX + j1 + inward * rimW, ey1);
-    ctx.closePath();
-    ctx.fillStyle = "rgba(232,186,96,0.44)";
-    ctx.fill();
-  }
-
-  ctx.restore();
-
-  // Subtle inner fold line. Keep it soft so the cookie does not look pre-cracked.
-  ctx.save();
-  ctx.strokeStyle = "rgba(187,124,49,0.26)";
-  ctx.lineWidth   = Math.max(0.9, w * 0.0028);
-  ctx.beginPath();
-  for (let i = 0; i <= steps; i++) {
-    const t      = i / steps;
-    const ey     = (cy - pinchH) + t * pinchH * 2;
-    const jitter = Math.sin(t * 21) * (w * 0.018) + Math.cos(t * 33) * (w * 0.009);
-    const ex     = breakX + jitter;
-    if (i === 0) ctx.moveTo(ex, ey);
-    else ctx.lineTo(ex, ey);
-  }
-  ctx.stroke();
-  ctx.restore();
 }
 
 class FortuneCookie {
@@ -470,9 +61,6 @@ class FortuneCookie {
   private homeLink: HTMLElement;
   private langToggle: HTMLElement;
   private statusNote: HTMLElement;
-  private canvasLeft: HTMLCanvasElement;
-  private canvasRight: HTMLCanvasElement;
-  private canvasClosed: HTMLCanvasElement;
   private content: Record<string, FortuneLocaleData> | null = null;
   private isCracked = false;
   private isReady = false;
@@ -489,21 +77,22 @@ class FortuneCookie {
     this.miniSlipText = document.getElementById("miniSlipText")!;
     this.miniSlipMeta = document.getElementById("miniSlipMeta")!;
     this.instruction = document.getElementById("instruction")!;
-    this.resetBtn = document.getElementById("resetBtn")!;
+    this.resetBtn = (document.getElementById("resetBtn") || document.getElementById("resetBtn2"))!;
     this.shareBtn = document.getElementById("shareBtn")!;
     this.titleEl = document.getElementById("title")!;
     this.subtitleEl = document.getElementById("subtitle")!;
     this.homeLink = document.getElementById("homeLink")!;
     this.langToggle = document.getElementById("langToggle")!;
     this.statusNote = document.getElementById("statusNote")!;
-    this.canvasLeft = document.getElementById("canvasLeft") as HTMLCanvasElement;
-    this.canvasRight = document.getElementById("canvasRight") as HTMLCanvasElement;
-    this.canvasClosed = document.getElementById("canvasClosed") as HTMLCanvasElement;
 
     this.lang = localStorage.getItem("playground-lang") || "ko";
 
     this.scene.addEventListener("click", () => this.crack());
     this.resetBtn.addEventListener("click", () => this.reset());
+    document.getElementById("resetBtn2")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.reset();
+    });
     this.shareBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       this.shareFortune();
@@ -515,15 +104,12 @@ class FortuneCookie {
         this.applyLang();
       }
     });
-    window.addEventListener("resize", () => this.drawCookie());
 
     this.initialize();
   }
 
   private async initialize(): Promise<void> {
     this.createStars();
-    this.drawCookie();
-
     const data = this.loadI18nData();
     if (!data) {
       try {
@@ -576,7 +162,10 @@ class FortuneCookie {
     document.documentElement.lang = this.lang;
     this.titleEl.textContent = t.title;
     this.subtitleEl.textContent = t.subtitle;
-    this.shareBtn.textContent = t.share;
+    const resetBtnText2 = document.getElementById("resetBtnText2");
+    if (resetBtnText2) resetBtnText2.textContent = t.newCookie;
+    const shareBtnText = document.getElementById("shareBtnText");
+    if (shareBtnText) shareBtnText.textContent = t.shareShort;
     if (!this.isCracked) {
       this.instruction.textContent = t.instruction;
       this.statusNote.textContent = t.statusHint;
@@ -595,7 +184,7 @@ class FortuneCookie {
       const text = list[idx];
       const tag = t.tags[this.currentTagIdx % t.tags.length];
       const color = t.luckyColors[this.currentColorIdx % t.luckyColors.length];
-      this.updateFortuneContent(text, tag, color, t.luckyLabel, t.keywordLabel, t.colorLabel);
+      this.updateFortuneContent(text, tag, color);
     }
 
     document.title = this.lang === "ko"
@@ -617,27 +206,19 @@ class FortuneCookie {
     }
   }
 
-  private drawCookie(): void {
-    drawClosedCookie(this.canvasClosed);
-    drawCookieHalf(this.canvasLeft, "left");
-    drawCookieHalf(this.canvasRight, "right");
-  }
-
   private updateFortuneContent(
     text: string,
     tag: string,
     color: { name: string; hex: string },
-    luckyLabel: string,
-    keywordLabel: string,
-    colorLabel: string
   ): void {
+    const t = this.getStrings();
     this.miniSlipText.textContent = formatFortuneText(text);
     this.miniSlipMeta.innerHTML = `
-      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "숫자" : "Number"}:</span> <strong>${this.currentLucky}</strong></span>
+      <span class="meta-item"><span class="meta-label">${t.numLabel}:</span> <strong>${this.currentLucky}</strong></span>
       <span class="meta-dot">·</span>
-      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "키워드" : "Keyword"}:</span> <strong>${tag}</strong></span>
+      <span class="meta-item"><span class="meta-label">${t.kwLabel}:</span> <strong>${tag}</strong></span>
       <span class="meta-dot">·</span>
-      <span class="meta-item"><span class="meta-label">${this.lang === "ko" ? "색상" : "Color"}:</span> <span class="color-swatch" style="background:${color.hex}"></span> <strong>${color.name}</strong></span>
+      <span class="meta-item"><span class="meta-label">${t.clrLabel}:</span> <span class="color-swatch" style="background:${color.hex}"></span> <strong>${color.name}</strong></span>
     `;
   }
 
@@ -717,9 +298,6 @@ class FortuneCookie {
       text,
       tag,
       t.luckyColors[this.currentColorIdx],
-      t.luckyLabel,
-      t.keywordLabel,
-      t.colorLabel
     );
 
     setTimeout(() => {
@@ -749,7 +327,6 @@ class FortuneCookie {
     }
     this.scene.focus();
     history.replaceState(null, "", location.pathname);
-    this.drawCookie();
   }
 
   private async generateShareCard(): Promise<Blob> {
@@ -763,52 +340,106 @@ class FortuneCookie {
     cv.width = S; cv.height = S;
     const ctx = cv.getContext("2d")!;
 
-    // Background - match site theme
+    // Load cookie image
+    const img = new Image();
+    img.src = "fortune-img.png";
+    await new Promise<void>((res) => { img.onload = () => res(); img.onerror = () => res(); });
+
+    // Background + cookie image layered
     const bg = ctx.createLinearGradient(0, 0, 0, S);
     bg.addColorStop(0, "#12071c"); bg.addColorStop(0.5, "#1c1231"); bg.addColorStop(1, "#0d233f");
     ctx.fillStyle = bg; ctx.fillRect(0, 0, S, S);
-    const glow = ctx.createRadialGradient(S/2, S*0.35, 0, S/2, S*0.35, S*0.5);
-    glow.addColorStop(0, "rgba(255,212,107,0.08)"); glow.addColorStop(1, "transparent");
-    ctx.fillStyle = glow; ctx.fillRect(0, 0, S, S);
 
     // Title
-    ctx.font = "700 52px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#ffd46b";
+    ctx.font = "700 44px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#ffd46b";
     ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    ctx.fillText(`🥠 ${t.title}`, S/2, S*0.12);
+    ctx.fillText(`🥠 ${t.title}`, S / 2, S * 0.10);
 
-    // Divider
-    ctx.strokeStyle = "rgba(255,212,107,0.18)"; ctx.lineWidth = 1; ctx.setLineDash([6,6]);
-    ctx.beginPath(); ctx.moveTo(S*0.15, S*0.19); ctx.lineTo(S*0.85, S*0.19); ctx.stroke();
-    ctx.setLineDash([]);
+    // Card area
+    const cardX = S * 0.06, cardY = S * 0.18, cardW = S * 0.88, cardH = S * 0.62;
+    ctx.fillStyle = "rgba(14,10,28,0.82)";
+    ctx.beginPath(); ctx.roundRect(cardX, cardY, cardW, cardH, 28); ctx.fill();
+    ctx.strokeStyle = "rgba(255,215,0,0.22)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(cardX, cardY, cardW, cardH, 28); ctx.stroke();
+
+    // Cookie image inside card as watermark
+    if (img.complete && img.naturalWidth > 0) {
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(cardX, cardY, cardW, cardH, 28); ctx.clip();
+      const ratio = img.naturalHeight / img.naturalWidth;
+      const imgW = cardW * 1.0;
+      const imgH = imgW * ratio;
+      const imgX = cardX + (cardW - imgW) / 2;
+      const imgY = cardY + (cardH - imgH) / 2;
+      ctx.globalAlpha = 0.22;
+      ctx.drawImage(img, imgX, imgY, imgW, imgH);
+      ctx.globalAlpha = 1;
+      // Darken white bg within card
+      ctx.fillStyle = "rgba(14,10,28,0.45)";
+      ctx.fillRect(cardX, cardY, cardW, cardH);
+      ctx.restore();
+    }
 
     // Fortune text
-    ctx.font = "600 44px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#fff7e8";
-    const lines = this.wrapText(ctx, text, S*0.72);
-    const lh = 62;
+    ctx.font = "600 42px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "#fff7e8";
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    const lines = this.wrapText(ctx, text, cardW - 80);
+    const lh = 58;
     const blockH = lines.length * lh;
-    const textY = S*0.48 - blockH/2;
-    lines.forEach((l, i) => ctx.fillText(l, S/2, textY + i*lh));
+    const textStartY = cardY + (cardH - blockH - 70) / 2 + 10;
+    lines.forEach((l, i) => ctx.fillText(l, S / 2, textStartY + i * lh));
 
-    // Bottom divider
-    ctx.strokeStyle = "rgba(255,212,107,0.18)"; ctx.setLineDash([6,6]);
-    ctx.beginPath(); ctx.moveTo(S*0.15, S*0.78); ctx.lineTo(S*0.85, S*0.78); ctx.stroke();
+    // Dashed divider
+    const divY = cardY + cardH - 75;
+    ctx.strokeStyle = "rgba(255,255,255,0.18)"; ctx.lineWidth = 1; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(cardX + 30, divY); ctx.lineTo(cardX + cardW - 30, divY); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Meta chips
-    ctx.font = "500 30px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,248,230,0.7)";
-    ctx.fillText(`🔮 ${t.luckyLabel} ${this.currentLucky}  ·  ${tag}`, S/2, S*0.85);
+    // Meta - chip style like web
+    const chips = [
+      `${t.numLabel}: ${this.currentLucky}`,
+      `${t.kwLabel}: ${tag}`,
+      `${t.clrLabel}: ${color.name}`
+    ];
+    const metaY = divY + 38;
+    ctx.font = "500 22px 'Noto Sans KR',sans-serif";
+    const chipPad = 20, chipH = 34, chipR = 17;
+    const chipWidths = chips.map(c => ctx.measureText(c).width + chipPad * 2);
+    const dotW = ctx.measureText(" · ").width;
+    const totalW = chipWidths.reduce((a, b) => a + b, 0) + dotW * 2;
+    let mx = (S - totalW) / 2;
+    chips.forEach((chip, i) => {
+      const cw = chipWidths[i];
+      ctx.fillStyle = "rgba(255,215,0,0.10)";
+      ctx.beginPath(); ctx.roundRect(mx, metaY - chipH / 2, cw, chipH, chipR); ctx.fill();
+      ctx.strokeStyle = "rgba(255,215,0,0.22)"; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.roundRect(mx, metaY - chipH / 2, cw, chipH, chipR); ctx.stroke();
+      ctx.fillStyle = "rgba(255,248,230,0.85)"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.fillText(chip, mx + chipPad, metaY);
+      mx += cw;
+      if (i < 2) {
+        ctx.fillStyle = "rgba(255,255,255,0.25)"; ctx.textAlign = "center";
+        ctx.fillText("·", mx + dotW / 2, metaY);
+        mx += dotW;
+      }
+    });
 
-    // Color chip
-    ctx.fillStyle = color.hex;
-    ctx.beginPath(); ctx.roundRect(S/2 - 60, S*0.89, 22, 22, 4); ctx.fill();
-    ctx.font = "500 28px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,248,230,0.6)";
-    ctx.textBaseline = "middle"; ctx.textAlign = "left";
-    ctx.fillText(`${t.colorLabel} ${color.name}`, S/2 - 32, S*0.90);
+    // CTA button
+    const ctaY = S * 0.86;
+    const ctaText = t.shareCta;
+    ctx.font = "600 30px 'Noto Sans KR',sans-serif";
+    const ctaW = ctx.measureText(ctaText).width + 56;
+    ctx.fillStyle = "rgba(255,215,0,0.12)";
+    ctx.beginPath(); ctx.roundRect((S - ctaW) / 2, ctaY - 20, ctaW, 48, 24); ctx.fill();
+    ctx.strokeStyle = "rgba(255,215,0,0.35)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect((S - ctaW) / 2, ctaY - 20, ctaW, 48, 24); ctx.stroke();
+    ctx.fillStyle = "#ffd700"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(ctaText, S / 2, ctaY + 3);
 
     // Footer
-    ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-    ctx.font = "400 24px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.2)";
-    ctx.fillText("eottabom.github.io", S/2, S - 36);
+    ctx.font = "400 20px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("eottabom.github.io", S / 2, S - 24);
 
     return new Promise((resolve, reject) => {
       cv.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob failed"))), "image/png");
@@ -842,7 +473,7 @@ class FortuneCookie {
       }
       try {
         await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-        this.showToast(this.lang === "ko" ? "이미지가 복사됐어요 ✓" : "Image copied ✓");
+        this.showToast(t.imageCopied);
         return;
       } catch {
         const a = document.createElement("a");
@@ -850,7 +481,7 @@ class FortuneCookie {
         a.download = "fortune-cookie.png";
         a.click();
         URL.revokeObjectURL(a.href);
-        this.showToast(this.lang === "ko" ? "이미지가 저장됐어요 ✓" : "Image saved ✓");
+        this.showToast(t.imageSaved);
       }
       return;
     } catch {
