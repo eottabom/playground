@@ -81,16 +81,7 @@ class FortuneCookie {
             en: data.en.fortune,
         };
         this.isReady = true;
-        const fromHash = this.loadFromHash();
-        if (fromHash)
-            this.isCracked = true;
         this.applyLang();
-        if (fromHash) {
-            this.instruction.classList.add("hidden");
-            this.scene.classList.add("cracked");
-            this.miniSlip.classList.add("visible");
-            this.resetBtn.classList.add("visible");
-        }
     }
     getStrings() {
         if (!this.content) {
@@ -353,8 +344,7 @@ class FortuneCookie {
     }
     async shareFortune() {
         const t = this.getStrings();
-        const hash = `#f=${this.currentFortuneIdx}&l=${this.currentLucky}&t=${this.currentTagIdx}&c=${this.currentColorIdx}&lang=${this.lang}`;
-        const url = `${location.origin}${location.pathname}${hash}`;
+        const url = `${location.origin}${location.pathname}`;
         try {
             const blob = await this.generateShareCard();
             const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
@@ -395,29 +385,6 @@ class FortuneCookie {
         toast.textContent = message;
         toast.classList.add("visible");
         setTimeout(() => toast.classList.remove("visible"), 2500);
-    }
-    loadFromHash() {
-        var _a, _b, _c, _d;
-        const hash = location.hash;
-        if (!hash)
-            return false;
-        const params = new URLSearchParams(hash.slice(1));
-        const f = parseInt((_a = params.get("f")) !== null && _a !== void 0 ? _a : "", 10);
-        const l = parseInt((_b = params.get("l")) !== null && _b !== void 0 ? _b : "", 10);
-        const t = parseInt((_c = params.get("t")) !== null && _c !== void 0 ? _c : "", 10);
-        const c = parseInt((_d = params.get("c")) !== null && _d !== void 0 ? _d : "", 10);
-        const lang = params.get("lang");
-        if (isNaN(f) || isNaN(l) || isNaN(t) || isNaN(c))
-            return false;
-        if (lang === "ko" || lang === "en") {
-            this.lang = lang;
-            localStorage.setItem("playground-lang", lang);
-        }
-        this.currentFortuneIdx = f;
-        this.currentLucky = l;
-        this.currentTagIdx = t;
-        this.currentColorIdx = c;
-        return true;
     }
 }
 document.addEventListener("DOMContentLoaded", () => {

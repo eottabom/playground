@@ -139,15 +139,7 @@ class FortuneCookie {
       en: data.en.fortune,
     };
     this.isReady = true;
-    const fromHash = this.loadFromHash();
-    if (fromHash) this.isCracked = true;
     this.applyLang();
-    if (fromHash) {
-      this.instruction.classList.add("hidden");
-      this.scene.classList.add("cracked");
-      this.miniSlip.classList.add("visible");
-      this.resetBtn.classList.add("visible");
-    }
   }
 
   private getStrings(): FortuneLocaleData {
@@ -461,8 +453,7 @@ class FortuneCookie {
 
   private async shareFortune(): Promise<void> {
     const t = this.getStrings();
-    const hash = `#f=${this.currentFortuneIdx}&l=${this.currentLucky}&t=${this.currentTagIdx}&c=${this.currentColorIdx}&lang=${this.lang}`;
-    const url = `${location.origin}${location.pathname}${hash}`;
+    const url = `${location.origin}${location.pathname}`;
 
     try {
       const blob = await this.generateShareCard();
@@ -507,31 +498,6 @@ class FortuneCookie {
     setTimeout(() => toast.classList.remove("visible"), 2500);
   }
 
-  private loadFromHash(): boolean {
-    const hash = location.hash;
-    if (!hash) return false;
-
-    const params = new URLSearchParams(hash.slice(1));
-    const f = parseInt(params.get("f") ?? "", 10);
-    const l = parseInt(params.get("l") ?? "", 10);
-    const t = parseInt(params.get("t") ?? "", 10);
-    const c = parseInt(params.get("c") ?? "", 10);
-    const lang = params.get("lang");
-
-    if (isNaN(f) || isNaN(l) || isNaN(t) || isNaN(c)) return false;
-
-    if (lang === "ko" || lang === "en") {
-      this.lang = lang;
-      localStorage.setItem("playground-lang", lang);
-    }
-
-    this.currentFortuneIdx = f;
-    this.currentLucky = l;
-    this.currentTagIdx = t;
-    this.currentColorIdx = c;
-
-    return true;
-  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
