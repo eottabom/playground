@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Mad Box - 혼자 욕하고 스트레스 푸는 곳 | 익명 분노 해소 채팅</title>
+  <meta name="description" content="혼자 마음껏 욕하고 스트레스 푸는 익명 채팅. 메시지를 불태우고, 망치로 부수고, 핵폭발로 날려버리세요! 다양한 파괴 인터랙션으로 카타르시스를 느껴보세요.">
+  <meta name="keywords" content="스트레스 해소, 익명 채팅, Mad Box, 카타르시스, 분노 해소, 화풀이, 욕하기, 스트레스 풀기, 분노 조절, 감정 해소, 힐링, 멘탈 케어">
+  <meta name="author" content="eottabom">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://eottabom.github.io/playground/mad-box/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Mad Box - 혼자 욕하고 스트레스 푸는 곳">
+  <meta property="og:description" content="다양한 파괴 인터랙션으로 스트레스를 날려버리세요! 불태우기, 망치로 부수기, 핵폭발, 총쏘기 등">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://eottabom.github.io/playground/mad-box/">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="Playground - eottabom">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Mad Box - 혼자 욕하고 스트레스 푸는 곳">
+  <meta name="twitter:description" content="다양한 파괴 인터랙션으로 스트레스를 날려버리세요!">
+
+  <!-- PWA / 모바일 -->
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5103032140213770"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 구조화된 데이터 (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Mad Box",
+    "description": "혼자 마음껏 욕하고 스트레스 푸는 익명 채팅. 다양한 파괴 인터랙션으로 카타르시스를 느껴보세요.",
+    "url": "https://eottabom.github.io/playground/mad-box/",
+    "applicationCategory": "Entertainment",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "eottabom",
+      "url": "https://eottabom.github.io"
+    },
+    "inLanguage": "ko",
+    "keywords": "스트레스 해소, 익명 채팅, 분노 해소, 카타르시스, 화풀이"
+  }
+  </script>
+</head>
+<body>
+  <header class="header">
+    <a href="../" class="back-btn" aria-label="홈으로">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div class="header-title">
+      <span class="header-icon">🤬</span>
+      <h1>Mad Box</h1>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="header-btn" id="resetBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      </button>
+      <button type="button" class="header-btn" id="shareBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="warning-bar">이건 나만 보는 거예요 🔒 &middot; 초기화: 시크릿 모드 or 캐시 삭제</div>
+
+  <main class="chat-area" id="chatArea">
+    <div class="empty-state" id="emptyState">
+      <div class="emoji">🤬</div>
+      <p class="main-text">여기에 마음껏 쏟아내세요</p>
+      <p class="sub-text">아무도 안 봐요 🤫</p>
+    </div>
+  </main>
+
+  <nav class="toolbar" id="toolbar" aria-label="파괴 도구">
+    <button type="button" data-mode="smash">🔨 부수기</button>
+    <button type="button" data-mode="throw">🥫 깡통</button>
+    <button type="button" data-mode="egg">🥚 계란</button>
+    <button type="button" data-mode="gun">🔫 총쏘기</button>
+    <button type="button" data-mode="yeot">🍬 엿던지기</button>
+    <button type="button" data-mode="water">💦 물풍선</button>
+    <button type="button" data-mode="paint">🎨 낙서</button>
+    <button type="button" data-mode="lightning">⚡ 벼락</button>
+    <button type="button" data-mode="axe">🪓 도끼</button>
+    <button type="button" data-mode="dynamite">🧨 다이나마이트</button>
+    <button type="button" data-mode="explode">💣 폭파</button>
+    <button type="button" data-mode="burn">🔥 태우기</button>
+  </nav>
+
+  <footer class="input-bar">
+    <input type="text" id="msgInput" placeholder="여기에 쏟아내세요..." autocomplete="off">
+    <button type="button" class="send-btn" id="sendBtn" aria-label="보내기">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    </button>
+  </footer>
+
+  <noscript>
+    <p style="text-align:center;padding:40px;color:#e8e0f0;">이 앱은 JavaScript가 필요합니다. 브라우저 설정에서 JavaScript를 활성화해주세요.</p>
+  </noscript>
+
+  <canvas id="destroyCanvas" class="destroy-canvas"></canvas>
+  <div id="destroyHint" class="destroy-hint"></div>
+
+  <script src="mad-box.js"></script>
+</body>
+</html>
