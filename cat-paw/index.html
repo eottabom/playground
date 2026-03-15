@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>냥냥 버튼 - 고양이 발 연타 게임 | Playground</title>
+  <meta name="description" content="10초 안에 고양이 발 버튼을 최대한 많이 눌러보세요! 귀여운 고양이 발로 버튼을 꾹꾹 누르는 연타 미니게임.">
+  <meta name="keywords" content="냥냥 버튼, 고양이 발, 연타 게임, 클릭 게임, 미니 게임, 버튼 누르기, cat paw, tap game">
+  <meta name="author" content="eottabom">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://eottabom.github.io/playground/cat-paw/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="냥냥 버튼 - 고양이 발 연타 게임">
+  <meta property="og:description" content="10초 안에 고양이 발 버튼을 최대한 많이 눌러보세요! 🐾">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://eottabom.github.io/playground/cat-paw/">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:site_name" content="Playground - eottabom">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="냥냥 버튼 - 고양이 발 연타 게임">
+  <meta name="twitter:description" content="10초 안에 고양이 발 버튼을 최대한 많이 눌러보세요! 🐾">
+
+  <!-- PWA / 모바일 -->
+  <meta name="theme-color" content="#1a1025">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="icon" type="image/png" href="paw.png">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5103032140213770"
+     crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- 구조화된 데이터 (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "냥냥 버튼",
+    "description": "10초 안에 고양이 발 버튼을 최대한 많이 눌러보세요! 귀여운 고양이 발로 버튼을 꾹꾹 누르는 연타 미니게임.",
+    "url": "https://eottabom.github.io/playground/cat-paw/",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "eottabom",
+      "url": "https://eottabom.github.io"
+    },
+    "inLanguage": "ko",
+    "keywords": "냥냥 버튼, 고양이 발, 연타 게임, 클릭 게임, tap game"
+  }
+  </script>
+</head>
+<body>
+  <header class="header">
+    <a href="../" class="back-btn" aria-label="홈으로">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </a>
+    <div class="header-title">
+      <img class="header-icon" src="paw.png" alt="🐾" width="28" height="28">
+      <h1>냥냥 버튼</h1>
+    </div>
+    <div class="header-actions"></div>
+  </header>
+
+  <main class="game-area" id="gameArea">
+    <!-- 대기 화면 -->
+    <div class="state-idle" id="stateIdle">
+      <p class="best-score" id="bestScore"></p>
+      <div class="paw-zone" id="pawZone">
+        <div class="bell-wrapper">
+          <div class="cat-paw" id="catPaw">
+            <img class="paw-img" src="paw.png" alt="고양이 발" draggable="false">
+          </div>
+          <svg class="bell-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bellDome" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffd46b"/>
+                <stop offset="40%" stop-color="#e8b84a"/>
+                <stop offset="100%" stop-color="#c49430"/>
+              </linearGradient>
+              <linearGradient id="bellBase" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#b8863a"/>
+                <stop offset="100%" stop-color="#8a6420"/>
+              </linearGradient>
+            </defs>
+            <!-- 받침대 -->
+            <rect x="20" y="95" width="160" height="12" rx="4" fill="url(#bellBase)"/>
+            <!-- 돔 -->
+            <ellipse cx="100" cy="95" rx="72" ry="50" fill="url(#bellDome)"/>
+            <!-- 하이라이트 -->
+            <ellipse cx="80" cy="72" rx="28" ry="18" fill="rgba(255,255,255,0.18)"/>
+            <!-- 꼭지 -->
+            <circle cx="100" cy="44" r="8" fill="#c49430"/>
+            <circle cx="100" cy="44" r="5" fill="#daa84e"/>
+          </svg>
+          <button class="tap-btn" id="tapBtn" type="button">
+            <span class="tap-btn-text" id="tapBtnText">시작하기</span>
+          </button>
+        </div>
+      </div>
+      <p class="hint-text">버튼을 눌러 시작!</p>
+    </div>
+
+    <!-- 카운트다운 -->
+    <div class="state-countdown hidden" id="stateCountdown">
+      <div class="countdown-num" id="countdownNum">3</div>
+    </div>
+
+    <!-- 플레이 -->
+    <div class="state-play hidden" id="statePlay">
+      <div class="play-hud">
+        <div class="timer-bar">
+          <div class="timer-fill" id="timerFill"></div>
+        </div>
+        <div class="play-stats">
+          <span class="timer-text" id="timerText">10.00</span>
+          <span class="score-text" id="scoreText">0</span>
+        </div>
+      </div>
+      <div class="paw-zone paw-zone--play">
+        <div class="bell-wrapper">
+          <div class="cat-paw" id="catPawPlay">
+            <img class="paw-img" src="paw.png" alt="고양이 발" draggable="false">
+          </div>
+          <svg class="bell-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bellDomePlay" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffd46b"/>
+                <stop offset="40%" stop-color="#e8b84a"/>
+                <stop offset="100%" stop-color="#c49430"/>
+              </linearGradient>
+              <linearGradient id="bellBasePlay" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#b8863a"/>
+                <stop offset="100%" stop-color="#8a6420"/>
+              </linearGradient>
+            </defs>
+            <rect x="20" y="95" width="160" height="12" rx="4" fill="url(#bellBasePlay)"/>
+            <ellipse cx="100" cy="95" rx="72" ry="50" fill="url(#bellDomePlay)"/>
+            <ellipse cx="80" cy="72" rx="28" ry="18" fill="rgba(255,255,255,0.18)"/>
+            <circle cx="100" cy="44" r="8" fill="#c49430"/>
+            <circle cx="100" cy="44" r="5" fill="#daa84e"/>
+          </svg>
+          <button class="tap-btn tap-btn--play" id="tapBtnPlay" type="button">
+            <span class="tap-btn-text">냥!</span>
+          </button>
+        </div>
+      </div>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- 결과 -->
+    <div class="state-result hidden" id="stateResult">
+      <div class="result-card" id="resultCard">
+        <div class="result-grade-emoji" id="resultEmoji">🐱</div>
+        <div class="result-score" id="resultScore">0</div>
+        <div class="result-grade" id="resultGrade">아기 고양이</div>
+        <div class="result-message" id="resultMessage">냥... 아직 발바닥이 말랑해요</div>
+        <div class="result-tps" id="resultTps">초당 0.0회</div>
+        <div class="result-best" id="resultBest"></div>
+        <div class="result-actions">
+          <button type="button" class="btn-retry" id="retryBtn">다시하기</button>
+          <button type="button" class="btn-share" id="shareBtn">공유하기</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <canvas id="shareCanvas" class="share-canvas"></canvas>
+
+  <div class="toast-share" id="shareToast"></div>
+
+  <noscript>
+    <p style="text-align:center;padding:40px;color:#e8e0f0;">이 앱은 JavaScript가 필요합니다.</p>
+  </noscript>
+
+  <script src="cat-paw.js"></script>
+</body>
+</html>
