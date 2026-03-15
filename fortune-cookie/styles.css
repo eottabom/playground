@@ -506,22 +506,16 @@
 
       .cookie-half {
         top: 42px;
+        left: 50%;
+        right: auto;
+        bottom: auto;
         width: 228px;
         height: 252px;
+        margin-left: -114px;
       }
 
       .cookie-closed {
         inset: 34px 20px 42px;
-      }
-
-      .cookie-left {
-        margin-left: -114px;
-        transform: translateX(-2px);
-      }
-
-      .cookie-right {
-        margin-left: -114px;
-        transform: translateX(2px);
       }
 
       .cookie-scene.cracked .cookie-left {
