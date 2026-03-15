@@ -3,6 +3,7 @@
 .codex/
 AGENTS.md
 CLAUDE.md
+styles/
 
 # Dependencies
 node_modules/
