@@ -347,6 +347,14 @@
       color: #fff;
     }
 
+    .save-action {
+      background: rgba(72, 199, 142, 0.15);
+      color: #48c78e;
+    }
+    .save-action:hover {
+      background: rgba(72, 199, 142, 0.28);
+    }
+
     .share-action {
       background: rgba(255, 215, 0, 0.15);
       color: #ffd700;

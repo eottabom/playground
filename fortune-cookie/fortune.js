@@ -23,6 +23,7 @@ class FortuneCookie {
         this.instruction = document.getElementById("instruction");
         this.resetBtn = document.getElementById("resetBtn") || document.getElementById("resetBtn2");
         this.shareBtn = document.getElementById("shareBtn");
+        this.saveBtn = document.getElementById("saveBtn");
         this.titleEl = document.getElementById("title");
         this.subtitleEl = document.getElementById("subtitle");
         this.homeLink = document.getElementById("homeLink");
@@ -35,6 +36,10 @@ class FortuneCookie {
         resetBtn2 === null || resetBtn2 === void 0 ? void 0 : resetBtn2.addEventListener("click", (e) => {
             e.stopPropagation();
             this.reset();
+        });
+        this.saveBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.saveImage();
         });
         this.shareBtn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -96,6 +101,8 @@ class FortuneCookie {
         this.subtitleEl.textContent = t.subtitle;
         const resetBtnText2 = document.getElementById("resetBtnText2");
         if (resetBtnText2) resetBtnText2.textContent = t.newCookie;
+        const saveBtnText = document.getElementById("saveBtnText");
+        if (saveBtnText) saveBtnText.textContent = t.saveShort;
         const shareBtnText = document.getElementById("shareBtnText");
         if (shareBtnText) shareBtnText.textContent = t.shareShort;
         if (!this.isCracked) {
@@ -341,6 +348,18 @@ class FortuneCookie {
         }
         if (cur.trim()) lines.push(cur.trim());
         return lines;
+    }
+    async saveImage() {
+        const t = this.getStrings();
+        try {
+            const blob = await this.generateShareCard();
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "fortune-cookie.png";
+            a.click();
+            URL.revokeObjectURL(a.href);
+            this.showToast(t.imageSaved);
+        } catch (_e) {}
     }
     async shareFortune() {
         const t = this.getStrings();
