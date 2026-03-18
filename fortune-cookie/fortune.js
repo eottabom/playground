@@ -100,11 +100,17 @@ class FortuneCookie {
         this.titleEl.textContent = t.title;
         this.subtitleEl.textContent = t.subtitle;
         const resetBtnText2 = document.getElementById("resetBtnText2");
-        if (resetBtnText2) resetBtnText2.textContent = t.newCookie;
+        if (resetBtnText2) {
+            resetBtnText2.textContent = t.newCookie;
+        }
         const saveBtnText = document.getElementById("saveBtnText");
-        if (saveBtnText) saveBtnText.textContent = t.saveShort;
+        if (saveBtnText) {
+            saveBtnText.textContent = t.saveShort;
+        }
         const shareBtnText = document.getElementById("shareBtnText");
-        if (shareBtnText) shareBtnText.textContent = t.shareShort;
+        if (shareBtnText) {
+            shareBtnText.textContent = t.shareShort;
+        }
         if (!this.isCracked) {
             this.instruction.textContent = t.instruction;
             this.statusNote.textContent = t.statusHint;
@@ -346,7 +352,9 @@ class FortuneCookie {
             if (ctx.measureText(test).width > maxWidth && cur.trim()) { lines.push(cur.trim()); cur = w.trimStart(); }
             else { cur = test; }
         }
-        if (cur.trim()) lines.push(cur.trim());
+        if (cur.trim()) {
+            lines.push(cur.trim());
+        }
         return lines;
     }
     async saveImage() {
