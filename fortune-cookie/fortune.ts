@@ -426,7 +426,7 @@ class FortuneCookie {
     });
 
     // CTA button
-    const ctaY = S * 0.86;
+    const ctaY = S * 0.84;
     const ctaText = t.shareCta;
     ctx.font = "600 30px 'Noto Sans KR',sans-serif";
     const ctaW = ctx.measureText(ctaText).width + 56;
@@ -437,10 +437,17 @@ class FortuneCookie {
     ctx.fillStyle = "#ffd700"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     ctx.fillText(ctaText, S / 2, ctaY + 3);
 
+    // URL embedded in image
+    const shareUrl = `${location.origin}${location.pathname}`;
+    ctx.font = "400 22px 'Noto Sans KR',sans-serif";
+    ctx.fillStyle = "rgba(255,215,0,0.75)";
+    ctx.textBaseline = "top";
+    ctx.fillText(shareUrl, S / 2, ctaY + 42);
+
     // Footer
-    ctx.font = "400 20px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.15)";
+    ctx.font = "400 18px 'Noto Sans KR',sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.12)";
     ctx.textBaseline = "bottom";
-    ctx.fillText("eottabom.github.io", S / 2, S - 24);
+    ctx.fillText("eottabom.github.io", S / 2, S - 20);
 
     return new Promise((resolve, reject) => {
       cv.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("toBlob failed"))), "image/png");
@@ -497,37 +504,23 @@ class FortuneCookie {
 
   private async shareFortune(): Promise<void> {
     const t = this.getStrings();
-    const shareText = this.buildShareText();
 
     try {
       const blob = await this.generateShareCard();
       const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: t.title, text: shareText });
+        await navigator.share({ files: [file] });
         return;
       }
       try {
         await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
         this.showToast(t.imageCopied);
-        return;
       } catch {
         this.downloadBlob(blob, "fortune-cookie.png");
         this.showToast(t.imageSaved);
       }
-      return;
     } catch {
-      // fall through
-    }
-
-    if (navigator.share) {
-      try { await navigator.share({ title: t.title, text: shareText }); return; } catch { /* fall through */ }
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareText);
-      this.showToast(t.shareToast);
-    } catch {
-      prompt(this.lang === "ko" ? "텍스트를 복사하세요:" : "Copy this text:", shareText);
+      this.showToast(t.imageSaved);
     }
   }
 
