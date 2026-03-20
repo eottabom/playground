@@ -465,7 +465,7 @@ class FortuneCookie {
                 this.showToast(t.imageSaved);
             }
         }
-        try {
+        catch {
             if (navigator.share) {
                 try {
                     await navigator.share({ url });
@@ -475,11 +475,13 @@ class FortuneCookie {
                     // fall through
                 }
             }
-            await navigator.clipboard.writeText(url);
-            this.showToast(t.shareToast);
-        }
-        catch {
-            prompt(this.lang === 'ko' ? '링크를 복사하세요:' : 'Copy this link:', url);
+            try {
+                await navigator.clipboard.writeText(url);
+                this.showToast(t.shareToast);
+            }
+            catch {
+                prompt(this.lang === 'ko' ? '링크를 복사하세요:' : 'Copy this link:', url);
+            }
         }
     }
     showToast(message) {
