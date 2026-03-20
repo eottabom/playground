@@ -509,7 +509,7 @@ class FortuneCookie {
       const blob = await this.generateShareCard();
       const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file] });
+        await navigator.share({ files: [file], url: `${location.origin}${location.pathname}` });
         return;
       }
       try {
