@@ -22,6 +22,7 @@ interface I18nStrings {
   shareCta: string;
   newCookie: string;
   shareShort: string;
+  saveShort: string;
 }
 
 interface LuckyColor {
@@ -56,6 +57,7 @@ class FortuneCookie {
   private instruction: HTMLElement;
   private resetBtn: HTMLElement;
   private shareBtn: HTMLElement;
+  private saveBtn: HTMLElement;
   private titleEl: HTMLElement;
   private subtitleEl: HTMLElement;
   private homeLink: HTMLElement;
@@ -79,6 +81,7 @@ class FortuneCookie {
     this.instruction = document.getElementById("instruction")!;
     this.resetBtn = (document.getElementById("resetBtn") || document.getElementById("resetBtn2"))!;
     this.shareBtn = document.getElementById("shareBtn")!;
+    this.saveBtn = document.getElementById("saveBtn")!;
     this.titleEl = document.getElementById("title")!;
     this.subtitleEl = document.getElementById("subtitle")!;
     this.homeLink = document.getElementById("homeLink")!;
@@ -92,6 +95,10 @@ class FortuneCookie {
     document.getElementById("resetBtn2")?.addEventListener("click", (e) => {
       e.stopPropagation();
       this.reset();
+    });
+    this.saveBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.saveImage();
     });
     this.shareBtn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -158,6 +165,8 @@ class FortuneCookie {
     if (resetBtnText2) resetBtnText2.textContent = t.newCookie;
     const shareBtnText = document.getElementById("shareBtnText");
     if (shareBtnText) shareBtnText.textContent = t.shareShort;
+    const saveBtnText = document.getElementById("saveBtnText");
+    if (saveBtnText) saveBtnText.textContent = t.saveShort;
     if (!this.isCracked) {
       this.instruction.textContent = t.instruction;
       this.statusNote.textContent = t.statusHint;
@@ -451,15 +460,50 @@ class FortuneCookie {
     return lines;
   }
 
-  private async shareFortune(): Promise<void> {
+  private downloadBlob(blob: Blob, filename: string): void {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
+  private async saveImage(): Promise<void> {
+    const t = this.getStrings();
+    try {
+      const blob = await this.generateShareCard();
+      const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: t.title });
+        return;
+      }
+      this.downloadBlob(blob, "fortune-cookie.png");
+      this.showToast(t.imageSaved);
+    } catch { /* silent */ }
+  }
+
+  private buildShareText(): string {
     const t = this.getStrings();
     const url = `${location.origin}${location.pathname}`;
+    const idx = Math.min(this.currentFortuneIdx, t.messages.length - 1);
+    const text = t.messages[idx];
+    const tag = t.tags[this.currentTagIdx % t.tags.length];
+    const color = t.luckyColors[this.currentColorIdx % t.luckyColors.length];
+    const meta = `${t.numLabel}: ${this.currentLucky} · ${t.kwLabel}: ${tag} · ${t.clrLabel}: ${color.name}`;
+    return `🥠 ${t.title}\n\n"${text}"\n\n${meta}\n\n${t.shareCta}\n${url}`;
+  }
+
+  private async shareFortune(): Promise<void> {
+    const t = this.getStrings();
+    const shareText = this.buildShareText();
 
     try {
       const blob = await this.generateShareCard();
       const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: t.title, url });
+        await navigator.share({ files: [file], title: t.title, text: shareText });
         return;
       }
       try {
@@ -467,11 +511,7 @@ class FortuneCookie {
         this.showToast(t.imageCopied);
         return;
       } catch {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "fortune-cookie.png";
-        a.click();
-        URL.revokeObjectURL(a.href);
+        this.downloadBlob(blob, "fortune-cookie.png");
         this.showToast(t.imageSaved);
       }
       return;
@@ -480,14 +520,14 @@ class FortuneCookie {
     }
 
     if (navigator.share) {
-      try { await navigator.share({ url, title: t.title }); return; } catch { /* fall through */ }
+      try { await navigator.share({ title: t.title, text: shareText }); return; } catch { /* fall through */ }
     }
 
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(shareText);
       this.showToast(t.shareToast);
     } catch {
-      prompt(this.lang === "ko" ? "URL을 복사하세요:" : "Copy this URL:", url);
+      prompt(this.lang === "ko" ? "텍스트를 복사하세요:" : "Copy this text:", shareText);
     }
   }
 
