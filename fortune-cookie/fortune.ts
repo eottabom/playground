@@ -504,23 +504,43 @@ class FortuneCookie {
 
   private async shareFortune(): Promise<void> {
     const t = this.getStrings();
+    const url = `${location.origin}${location.pathname}`;
 
     try {
       const blob = await this.generateShareCard();
-      const file = new File([blob], "fortune-cookie.png", { type: "image/png" });
+      const file = new File([blob], 'fortune-cookie.png', { type: 'image/png' });
+
       if (navigator.share && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], url: `${location.origin}${location.pathname}` });
+        await navigator.share({
+          files: [file],
+          url,
+        });
         return;
       }
+
       try {
-        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
         this.showToast(t.imageCopied);
       } catch {
-        this.downloadBlob(blob, "fortune-cookie.png");
+        this.downloadBlob(blob, 'fortune-cookie.png');
         this.showToast(t.imageSaved);
       }
     } catch {
-      this.showToast(t.imageSaved);
+      if (navigator.share) {
+        try {
+          await navigator.share({ url });
+          return;
+        } catch {
+          // fall through
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        this.showToast(t.shareToast);
+      } catch {
+        prompt(this.lang === 'ko' ? '링크를 복사하세요:' : 'Copy this link:', url);
+      }
     }
   }
 
