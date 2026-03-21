@@ -1,0 +1,44 @@
+<svg width="360" height="440" viewBox="0 0 360 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="180" y1="18" x2="180" y2="422" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2E355C"/>
+      <stop offset="1" stop-color="#111425"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="180" y1="190" x2="180" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7FBFF"/>
+      <stop offset="1" stop-color="#D9E6FF"/>
+    </linearGradient>
+    <linearGradient id="tie" x1="180" y1="214" x2="180" y2="346" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F05E66"/>
+      <stop offset="1" stop-color="#981D45"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="440" rx="36" fill="url(#bg)"/>
+  <ellipse cx="180" cy="394" rx="116" ry="18" fill="#080A15" fill-opacity="0.5"/>
+  <path d="M120 112C120 73.3401 151.34 42 190 42C228.66 42 260 73.3401 260 112C260 129.604 253.503 145.689 242.786 157.993C230.228 172.41 212.159 181.5 192 181.5C154.668 181.5 123.129 150.12 120.094 112.932L120 112Z" fill="#FFD0A8"/>
+  <path d="M114 112C116.5 72 151 42 192 42C233 42 267.5 72 270 112L270 124H114V112Z" fill="#202846"/>
+  <path d="M148 74C156.667 63.3333 171.333 58 192 58C212.667 58 227.333 63.3333 236 74" stroke="#202846" stroke-width="10" stroke-linecap="round"/>
+  <path d="M122 109C130.333 100.333 142.667 95.5 156.5 95.5H227.5C241.333 95.5 253.667 100.333 262 109V124H122V109Z" fill="#202846"/>
+  <rect x="132" y="110" width="40" height="24" rx="12" fill="#F7FBFF" stroke="#43527A" stroke-width="5"/>
+  <rect x="188" y="110" width="40" height="24" rx="12" fill="#F7FBFF" stroke="#43527A" stroke-width="5"/>
+  <rect x="172" y="118" width="16" height="5" rx="2.5" fill="#43527A"/>
+  <circle cx="152" cy="122" r="6" fill="#2B3558"/>
+  <circle cx="208" cy="122" r="6" fill="#2B3558"/>
+  <path d="M164 150C172.469 154.705 184.497 155.279 194 151.5C200.336 148.981 205.869 144.137 210 138" stroke="#A75547" stroke-width="7" stroke-linecap="round"/>
+  <path d="M122 228C122 192.654 150.654 164 186 164H194C229.346 164 258 192.654 258 228V256H122V228Z" fill="url(#shirt)"/>
+  <path d="M150 186H230L210 220L194 246H166L150 220V186Z" fill="#F7FBFF"/>
+  <path d="M172 186L180 214L166 232L154 186H172Z" fill="#DCE7FF"/>
+  <path d="M208 186L202 214L216 232L230 186H208Z" fill="#DCE7FF"/>
+  <path d="M177 202H191L188 222L198 300L182 300L186 222L177 202Z" fill="url(#tie)"/>
+  <path d="M182 300H198L205 386L190 398L174 386L182 300Z" fill="url(#tie)"/>
+  <path d="M146 246H214L220 312H140L146 246Z" fill="#E2ECFF"/>
+  <path d="M144 312H178L174 390H138L144 312Z" fill="#23305F"/>
+  <path d="M182 312H216L222 390H186L182 312Z" fill="#23305F"/>
+  <path d="M178 312H182L184 390H176L178 312Z" fill="#172044"/>
+  <rect x="128" y="252" width="26" height="88" rx="13" fill="#FFD0A8"/>
+  <rect x="206" y="252" width="26" height="88" rx="13" fill="#FFD0A8"/>
+  <rect x="138" y="386" width="34" height="16" rx="8" fill="#0F1326"/>
+  <rect x="190" y="386" width="34" height="16" rx="8" fill="#0F1326"/>
+  <rect x="116" y="198" width="48" height="18" rx="9" transform="rotate(-14 116 198)" fill="#F4F6FF"/>
+  <rect x="210" y="186" width="52" height="18" rx="9" transform="rotate(10 210 186)" fill="#F4F6FF"/>
+</svg>
