@@ -26,6 +26,10 @@ HTML5 미니 게임 & 재미있는 웹 콘텐츠 모음.
 npx serve .
 ```
 
+## AI 활용
+
+이 프로젝트의 일부는 AI 도구(Claude)의 도움을 받아 개발되었습니다.
+
 ## 배포
 
 GitHub Pages — `https://eottabom.github.io/playground/`
